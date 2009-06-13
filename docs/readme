@@ -1,0 +1,26 @@
+
+Grammer: This is just to create an interpreter for kernel of scheme, We'll extend it by writing a metacircular interpreter in kernel scheme.
+
+expr :=
+      | CHAR    ;charExpr
+      | STRING    ;stringExpr
+      | NUMBER    ;numberExpr
+      | VARIABLE    ; variableExpr
+      | LPAREN DEFINE VARIABLE expr RPAREN    ;definitionExpr 
+      | LPAREN IF expr expr expr? RPAREN    ;ifExpr
+      | LPAREN LAMBDA LPAREN variable* RPAREN expr+ RPAREN    ;lambdaExpr
+      | LPAREN variable expr* RPAREN    ;applicationExpr
+
+
+
+CHAR := '  anwscelrp   ' ;where anwcelrp = any-non-white-space-char-except-left-right-paren
+NUMBER := DIGIT(DIGIT)*
+DIGIT := 0|1|2|3|4|5|6|7|8|9
+STRING := " anwscelrp(anwscelrp)* "
+LPAREN := (
+RPAREN := )
+VARIABLE := anwscelrp(anwscelrp)*
+
+
+Notes:
+ - Everything except 0 is a true value.
