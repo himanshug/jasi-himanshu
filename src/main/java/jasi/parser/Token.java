@@ -1,5 +1,10 @@
 package jasi.parser;
 
+/**
+ * Each token is one of terminal from the grammar
+ * 
+ * @author himanshu <g.himanshu@gmail.com>
+ */
 public class Token {
 
     private final int type;
