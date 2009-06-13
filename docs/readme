@@ -1,5 +1,6 @@
+This is just to create an interpreter for kernel of scheme, We'll extend it by writing a metacircular interpreter in kernel scheme.
 
-Grammer: This is just to create an interpreter for kernel of scheme, We'll extend it by writing a metacircular interpreter in kernel scheme.
+Grammer: 
 
 expr :=
       | CHAR    ;charExpr
@@ -13,14 +14,15 @@ expr :=
 
 
 
-CHAR := '  anwscelrp   ' ;where anwcelrp = any-non-white-space-char-except-left-right-paren
+CHAR := #\any-non-white-space-char
 NUMBER := DIGIT(DIGIT)*
 DIGIT := 0|1|2|3|4|5|6|7|8|9
-STRING := " anwscelrp(anwscelrp)* "
-LPAREN := (
+STRING := "any-characters"
+LPAREN := '('
 RPAREN := )
-VARIABLE := anwscelrp(anwscelrp)*
+VARIABLE := [^#0-9()] any-non-white-space-char    ;denoted using regex character class
 
 
 Notes:
+ - All the words in all-uppercase letters are terminals.
  - Everything except 0 is a true value.
