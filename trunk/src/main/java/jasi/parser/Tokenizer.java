@@ -6,7 +6,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 /**
- * This reads characters from input stream and returns the tokens.
+ * This reads characters from input stream and returns the tokens(terminals),
+ * each token has a type associated with it.
+ * Here we are implementing the lexer using a finite state machine.
+ * 
  * @author hgupta <g.himanshu@gmail.com>
  *
  */
@@ -14,12 +17,20 @@ public class Tokenizer {
 
     private final static Logger log = Logger.getLogger(Tokenizer.class.getName());
 
+    //Tokenizer has just been called to read a token
     private final static int ZERO_STATE = 0;
+    //From ZERO_STATE we read a '#'
     private final static int CHAR_ZERO_STATE = 1;
+    //From CHAR_ZERO_STATE we read a '\'
     private final static int CHAR_ONE_STATE = 2;
+    //From ZERO_STATE we read a '"'
     private final static int STRING_ZERO_STATE = 3;
-    private final static int VARIABLE_ZERO_STATE = 4;
-    private final static int NUMBER_ZERO_STATE = 5;
+    //From ZERO_STATE we read a digit
+    private final static int NUMBER_ZERO_STATE = 4;
+    //From ZERO_STATE, when we read any non-whitespace char
+    //other than the ones described above.
+    private final static int VARIABLE_ZERO_STATE = 5;
+    
     
     private static Map<String, Integer> keywords;
     private static PushbackInputStream in = new PushbackInputStream(System.in);
