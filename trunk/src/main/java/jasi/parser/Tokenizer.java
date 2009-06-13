@@ -3,9 +3,7 @@ package jasi.parser;
 import java.io.PushbackInputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-//import org.apache.commons.logging.Log;
-//import org.apache.commons.logging.LogFactory;
+import java.util.logging.Logger;
 
 /**
  * This reads characters from input stream and returns the tokens.
@@ -14,7 +12,7 @@ import java.util.Map;
  */
 public class Tokenizer {
 
-    //private final static Log log = LogFactory.getLog(Tokenizer.class);
+    private final static Logger log = Logger.getLogger(Tokenizer.class.getName());
 
     private final static int ZERO_STATE = 0;
     private final static int CHAR_ZERO_STATE = 1;
@@ -42,15 +40,14 @@ public class Tokenizer {
             peekedToken = null;
         }
         else t = nextToken();
-        //log.fatal("fetched token:" + t.toString());
-        System.out.println("fetched token:" + t.toString());
+        log.fine("fetched token:" + t.toString());
         return t;
     }
 
     public static Token peekNextToken() {
         if(peekedToken == null) {
             peekedToken = nextToken();
-            System.out.println("peeked token:" + peekedToken.toString());
+            log.fine("peeked token:" + peekedToken.toString());
             return peekedToken;
         }
         else

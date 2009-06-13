@@ -1,13 +1,20 @@
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 import jasi.ast.AST;
 import jasi.parser.Parser;
+import jasi.parser.Tokenizer;
 
 public class Main {
+
+    private final static Logger log = Logger.getLogger(Tokenizer.class.getName());
 
 	public static void main(String[] args) {
 	    Parser p = new Parser();
         AST ast = p.parseExpr();
-        System.out.println(ast);
-        System.out.println(":" + ast.toString() + ":");
+        log.severe(":" + ast.toString() + ":");
     }
 
 	/*private void eval(Expression exp, Environment env) {
