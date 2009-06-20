@@ -13,7 +13,7 @@ import jasi.ast.VariableAST;
 /**
  * This is a Recursive descent parser, where we have one parse method
  * for each production rule(each one is given a label) in EBNF representation
- * of the grammer. And each parse method creates its respective AST.
+ * of the grammar. And each parse method creates its respective AST.
  * It is essential to remove left recursion and left factorize the grammar for
  * it to be implementable using recursive descent algorhythm.
  * 
