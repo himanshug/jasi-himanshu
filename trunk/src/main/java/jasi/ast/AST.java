@@ -1,5 +1,5 @@
 package jasi.ast;
 
-public class AST {
+public abstract class AST {
 
 }
