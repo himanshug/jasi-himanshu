@@ -111,7 +111,7 @@ public class Scheme {
 
     private Object apply(Object proc, Object args, Environment env) {
         if(proc instanceof PrimitiveProcedure) {
-            return ((PrimitiveProcedure)proc).apply(args);
+            return ((PrimitiveProcedure)proc).apply(args, env);
         }
         //else if compound..
         //..
