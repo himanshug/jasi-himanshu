@@ -46,6 +46,7 @@ public class Scheme {
         return (Utils.isSchemeChar(exp) ||
                 Utils.isSchemeNumber(exp) ||
                 Utils.isSchemeString(exp) ||
+                Utils.isSchemeBoolean(exp) ||
                 Utils.isEmptyList(exp));
     }
 
