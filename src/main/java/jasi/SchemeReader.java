@@ -25,24 +25,6 @@ public class SchemeReader {
         }
     }
 
-    public static String write(Object o) {
-        //todo: support booleans, pair
-        if(Utils.isSchemeChar(o))
-            return Utils.writeSchemeChar(o);
-        else if(Utils.isSchemeNumber(o))
-            return Utils.writeSchemeNumber(o);
-        else if(Utils.isSchemeString(o))
-            return Utils.writeSchemeString(o);
-        else if(Utils.isSchemeVariable(o))
-            return Utils.writeSchemeVariable(o);
-        else if(o instanceof Pair)
-            return ((Pair)o).toString();
-        else if(o == null) //empty list
-            return "()";
-        else
-            throw new RuntimeException("could not write:" + o);
-    }
-
     //by the time we reach here, left paren has been read.
     private static Object readPair() {
         System.out.println("came to read pair");

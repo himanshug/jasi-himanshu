@@ -8,9 +8,4 @@ public class Constants {
     public final static int TOKEN_TYPE_LPAREN = 3;
     public final static int TOKEN_TYPE_RPAREN = 4;
     public final static int TOKEN_TYPE_VARIABLE = 5;
-    
-    public final static int TOKEN_TYPE_DEFINE = 6;
-    public final static int TOKEN_TYPE_IF = 7;
-    public final static int TOKEN_TYPE_LAMBDA = 8;
-
 }

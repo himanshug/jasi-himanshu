@@ -27,21 +27,7 @@ public class Pair {
         this.cdr = cdr;
     }
 
-    public String toString() {
-        String result = "(" + SchemeReader.write(car);
-        Object tmp = cdr;
-        while(tmp != null && tmp instanceof Pair) {
-            Pair p = (Pair)tmp;
-            result += " " + SchemeReader.write(p.getCar());
-            tmp = p.getCdr();
-        }
-        
-        if(tmp == null) result += ")";
-        else result += (" . " + SchemeReader.write(tmp) + ")");
-        return result;
-    }
-
-    public boolean isList(Object o) {
+    public static boolean isList(Object o) {
         if(o == null)
             return true;
         
