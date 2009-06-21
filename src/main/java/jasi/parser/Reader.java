@@ -1,12 +1,13 @@
-package jasi;
+package jasi.parser;
 
+import jasi.Constants;
 import jasi.datatype.SBoolean;
 import jasi.datatype.SChar;
 import jasi.datatype.SNumber;
 import jasi.datatype.SString;
 import jasi.datatype.SVariable;
 
-public class SchemeReader {
+public class Reader {
 
     public static Object read() {
         Token currentToken = Tokenizer.getNextToken();

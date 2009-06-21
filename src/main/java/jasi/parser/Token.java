@@ -1,4 +1,4 @@
-package jasi;
+package jasi.parser;
 
 /**
  * Each token is one of terminal from the grammar
