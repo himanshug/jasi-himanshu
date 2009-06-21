@@ -4,6 +4,7 @@ import jasi.Constants;
 import jasi.datatype.SBoolean;
 import jasi.datatype.SChar;
 import jasi.datatype.SNumber;
+import jasi.datatype.SPair;
 import jasi.datatype.SString;
 import jasi.datatype.SVariable;
 
@@ -32,13 +33,13 @@ public class Reader {
 
     //by the time we reach here, left paren has been read.
     private static Object readSPair() {
-        Pair p = null;
+        SPair p = null;
         Token token = Tokenizer.peekNextToken();
         if(token.getType() != Constants.TOKEN_TYPE_RPAREN) {
             if(token.getSpelling().equals("."))
                 throw new RuntimeException("ill formed dotted list");
             else {
-                p = new Pair(read(), null);
+                p = new SPair(read(), null);
                 token = Tokenizer.peekNextToken();
                 if(token.getType() != Constants.TOKEN_TYPE_RPAREN) {
                     if(token.getSpelling().equals(".")) {
