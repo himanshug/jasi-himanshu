@@ -1,4 +1,5 @@
-package jasi.parser;
+package jasi;
+
 
 import java.io.PushbackInputStream;
 import java.util.HashMap;
@@ -56,13 +57,10 @@ public class Tokenizer {
     }
 
     public static Token peekNextToken() {
-        if(peekedToken == null) {
+        if(peekedToken == null)
             peekedToken = nextToken();
-            log.fine("peeked token:" + peekedToken.toString());
-            return peekedToken;
-        }
-        else
-            throw new RuntimeException("Only one peek is allowed");
+        log.fine("peeked token:" + peekedToken.toString());
+        return peekedToken;
     }
 
     //reads next token from System input stream

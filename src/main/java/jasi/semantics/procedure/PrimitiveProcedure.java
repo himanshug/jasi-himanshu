@@ -8,6 +8,8 @@ public class PrimitiveProcedure extends Procedure {
 
     //todo: try to do read-eval first and that may change various design
     //decisions.
+    //also do lambda
+    //macro-expand will modify the AST
 
     //procecure Ids
     public final static int PLUS = 0;
