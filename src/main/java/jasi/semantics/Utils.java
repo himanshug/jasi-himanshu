@@ -4,23 +4,24 @@ import jasi.Pair;
 
 public class Utils {
 
-    //empty list
-    public static boolean isEmptyList(Object o) {
-        return (o == null);
+    //booleans
+    public static boolean isSchemeBoolean() {
+        return (o instanceof Boolean);
     }
 
-    public static boolean isSchemeList(Object o) {
-        if(o == null)
-            return true;
-        
-        if(o instanceof Pair) {
-            return isSchemeList(((Pair)o).getCdr());
-        }
-        return false;
+    public static boolean readSchemeBoolean(String s) {
+        char c = s.charAt(1);
+        if(c == 't') return true;
+        else if(c == 'f') return false;
+        else
+            throw new RuntimeException("not a scheme boolean: " + s);
     }
 
-    public static String writeEmptyList(Object o) {
-        return "()";
+    public static String writeSchemeBoolean(Object o) {
+        validateType(o, Boolean.class);
+        boolean b = ((Boolean)o).booleanValue();
+        if(b) return "#t";
+        else return "#f";
     }
 
     //characters
@@ -104,6 +105,26 @@ public class Utils {
         else result += (" . " + write(tmp) + ")");
 
         return result;
+    }
+
+    //empty list
+    public static boolean isEmptyList(Object o) {
+        return (o == null);
+    }
+
+    public static String writeEmptyList(Object o) {
+        return "()";
+    }
+
+    //list
+    public static boolean isSchemeList(Object o) {
+        if(o == null)
+            return true;
+        
+        if(o instanceof Pair) {
+            return isSchemeList(((Pair)o).getCdr());
+        }
+        return false;
     }
 
     //generic scheme expression writer
