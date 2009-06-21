@@ -4,6 +4,25 @@ import jasi.Pair;
 
 public class Utils {
 
+    //empty list
+    public static boolean isEmptyList(Object o) {
+        return (o == null);
+    }
+
+    public static boolean isSchemeList(Object o) {
+        if(o == null)
+            return true;
+        
+        if(o instanceof Pair) {
+            return isSchemeList(((Pair)o).getCdr());
+        }
+        return false;
+    }
+
+    public static String writeEmptyList(Object o) {
+        return "()";
+    }
+
     //characters
     public static boolean isSchemeChar(Object o) {
         return (o instanceof Character);
@@ -100,8 +119,8 @@ public class Utils {
             return writeSchemeVariable(o);
         else if(isSchemePair(o))
             return writeSchemePair(o);
-        else if(o == null) //empty list
-            return "()";
+        else if(isEmptyList(o)) //empty list
+            return writeEmptyList(o);
         else
             throw new RuntimeException("could not write:" + o);
     }
