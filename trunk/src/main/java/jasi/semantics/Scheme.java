@@ -3,6 +3,8 @@ package jasi.semantics;
 import java.util.ArrayList;
 
 import jasi.Pair;
+import jasi.datatype.SNumber;
+import jasi.datatype.SVariable;
 import jasi.semantics.procedure.PrimitiveProcedure;
 
 public class Scheme {
@@ -43,11 +45,12 @@ public class Scheme {
     //self evaluating
     private boolean isSelfEvaluating(Object exp) {
         //todo: support booleans
-        return (Utils.isSchemeChar(exp) ||
-                Utils.isSchemeNumber(exp) ||
-                Utils.isSchemeString(exp) ||
-                Utils.isSchemeBoolean(exp) ||
-                Utils.isEmptyList(exp));
+//        return (Utils.isSchemeChar(exp) ||
+//                Utils.isSchemeNumber(exp) ||
+//                Utils.isSchemeString(exp) ||
+//                Utils.isSchemeBoolean(exp) ||
+//                Utils.isEmptyList(exp));
+        return (exp instanceof SNumber);
     }
 
     private Object selfEvaluateValue(Object exp) {
@@ -56,11 +59,11 @@ public class Scheme {
 
     //variable
     private boolean isVariable(Object exp) {
-        return Utils.isSchemeVariable(exp);
+        return (exp instanceof SVariable);
     }
 
     private Object getVariableValue(Object exp, Environment env) {
-        return env.getVariableValue((String)exp);
+        return env.getVariableValue((SVariable)exp);
     }
 
     
@@ -75,11 +78,11 @@ public class Scheme {
     private Object operator(Object exp, Environment env) {
         Pair p = (Pair)exp;
         Object o = p.getCar();
-        if(Utils.isSchemeVariable(o)) {
-            return env.getVariableValue((String)o);
+        if(o instanceof SVariable) {
+            return env.getVariableValue((SVariable)o);
         }
         else {
-            throw new RuntimeException("can not apply :" + Utils.write(o));
+            throw new RuntimeException("can not apply :" + o.toString());
         }
     }
 
