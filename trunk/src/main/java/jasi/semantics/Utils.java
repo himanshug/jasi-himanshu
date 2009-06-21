@@ -5,7 +5,7 @@ import jasi.Pair;
 public class Utils {
 
     //booleans
-    public static boolean isSchemeBoolean() {
+    public static boolean isSchemeBoolean(Object o) {
         return (o instanceof Boolean);
     }
 
@@ -132,6 +132,8 @@ public class Utils {
         //todo: support booleans, pair
         if(isSchemeChar(o))
             return writeSchemeChar(o);
+        else if(isSchemeBoolean(o))
+            return writeSchemeBoolean(o);
         else if(isSchemeNumber(o))
             return writeSchemeNumber(o);
         else if(isSchemeString(o))

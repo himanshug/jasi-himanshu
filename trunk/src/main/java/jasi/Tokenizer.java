@@ -19,9 +19,9 @@ public class Tokenizer {
     //Tokenizer has just been called to read a token
     private final static int ZERO_STATE = 0;
     //From ZERO_STATE we read a '#'
-    private final static int CHAR_ZERO_STATE = 1;
-    //From CHAR_ZERO_STATE we read a '\'
-    private final static int CHAR_ONE_STATE = 2;
+    private final static int HASH_ZERO_STATE = 1;
+    //From CHAR_ZERO_STATE we read a '\' right after a '#'
+    private final static int CHAR_ZERO_STATE = 2;
     //From ZERO_STATE we read a '"'
     private final static int STRING_ZERO_STATE = 3;
     //From ZERO_STATE we read a digit
@@ -71,7 +71,7 @@ public class Tokenizer {
                         else if(!isWhiteSpace(c)) {
                             switch(c) {
                                 case '#':
-                                    state = CHAR_ZERO_STATE;
+                                    state = HASH_ZERO_STATE;
                                     break;
                                 case '"':
                                     state = STRING_ZERO_STATE;
@@ -94,17 +94,26 @@ public class Tokenizer {
                             tokenBuilder.append(c);
                         }
                         break;
-                    case CHAR_ZERO_STATE:
+                    case HASH_ZERO_STATE:
                         if(c == '\\') {
                             tokenBuilder.append(c);
-                            state = CHAR_ONE_STATE;
+                            state = CHAR_ZERO_STATE;
+                            break;
                         }
-                        else
-                            throw new RuntimeException("expected \\ found:" + c);
-                        break;
-                    case CHAR_ONE_STATE:
+                        else {
+                            if(!isWhiteSpace(c))
+                                tokenBuilder.append(c);
+                            else
+                                throw new RuntimeException("not valid # token.");
+                            if(!isWhiteSpace((char)in.read()))
+                                throw new RuntimeException("not valid # token");
+                            return new Token(Constants.TOKEN_TYPE_BOOLEAN, tokenBuilder.toString());
+                        }
+                    case CHAR_ZERO_STATE:
                         if(!isWhiteSpace(c)) {
                             tokenBuilder.append(c);
+                            if(!isWhiteSpace((char)in.read()))
+                                throw new RuntimeException("not valid char token");
                             return new Token(Constants.TOKEN_TYPE_CHAR, tokenBuilder.toString());
                         }
                         else

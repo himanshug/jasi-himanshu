@@ -12,6 +12,8 @@ public class SchemeReader {
             //todo: support booleans, pair
             case Constants.TOKEN_TYPE_CHAR:
                 return Utils.readSchemeChar(currentToken.getSpelling());
+            case Constants.TOKEN_TYPE_BOOLEAN:
+                return Utils.readSchemeBoolean(currentToken.getSpelling());
             case Constants.TOKEN_TYPE_NUMBER:
                 return Utils.readSchemeNumber(currentToken.getSpelling());
             case Constants.TOKEN_TYPE_STRING:
