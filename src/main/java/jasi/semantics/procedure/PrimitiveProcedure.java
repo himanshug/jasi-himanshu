@@ -2,6 +2,7 @@ package jasi.semantics.procedure;
 
 import java.util.ArrayList;
 
+import jasi.datatype.SNumber;
 import jasi.semantics.Environment;
 
 public class PrimitiveProcedure extends Procedure {
@@ -54,14 +55,14 @@ public class PrimitiveProcedure extends Procedure {
 
         for(int i=0; i < args.size(); i++) {
             Object o = args.get(i);
-            if(o instanceof Double) {
-                double d = ((Double)o).doubleValue();
+            if(o instanceof SNumber) {
+                double d = ((SNumber)o).getValue();
                 result += d;
             }
             else {
                 throw new RuntimeException("invalid argument, not a number:" + o);
             }
         }
-        return result;
+        return new SNumber(result);
     }
 }

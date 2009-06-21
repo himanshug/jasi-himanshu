@@ -11,6 +11,6 @@ public class Main {
     public static void main(String[] args) {
         Scheme s = new Scheme();
         Environment env = new Environment();
-        log.severe(":" + Utils.write(s.eval(SchemeReader.read(), env)) + ":");
+        log.severe(":" + (s.eval(SchemeReader.read(), env)).toString() + ":");
     }
 }
