@@ -63,7 +63,7 @@ public class Scheme {
     }
 
     private Object getVariableValue(Object exp, Environment env) {
-        return env.getVariableValue((SVariable)exp);
+        return env.getBinding((SVariable)exp);
     }
 
     
@@ -79,7 +79,7 @@ public class Scheme {
         SPair p = (SPair)exp;
         Object o = p.getCar();
         if(o instanceof SVariable) {
-            return env.getVariableValue((SVariable)o);
+            return env.getBinding((SVariable)o);
         }
         else {
             throw new RuntimeException("can not apply :" + o.toString());

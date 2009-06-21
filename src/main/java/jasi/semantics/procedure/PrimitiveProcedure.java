@@ -3,6 +3,7 @@ package jasi.semantics.procedure;
 import java.util.ArrayList;
 
 import jasi.datatype.SNumber;
+import jasi.parser.Reader;
 import jasi.semantics.Environment;
 
 public class PrimitiveProcedure extends Procedure {
@@ -18,6 +19,8 @@ public class PrimitiveProcedure extends Procedure {
     public final static int MULTIPLICATION = MINUS + 1;
     public final static int DIVISION = MULTIPLICATION + 1;
 
+    public final static int READ = 100;
+    public final static int EVAL = READ + 1;
     //procedure id of this PrimitiveProcedure
     private int id;
 
@@ -43,6 +46,10 @@ public class PrimitiveProcedure extends Procedure {
             return applyMultiplication(args);
         case DIVISION:
             return applyDivision(args);*/
+        case READ:
+            return applyRead();
+        //case EVAL:
+            //return applyEval(args);
         default:
             throw new RuntimeException("not a valid primitive procedure id:" + id);
         }
@@ -64,5 +71,9 @@ public class PrimitiveProcedure extends Procedure {
             }
         }
         return new SNumber(result);
+    }
+
+    private Object applyRead() {
+        return Reader.read();
     }
 }
