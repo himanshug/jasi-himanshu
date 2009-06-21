@@ -1,4 +1,4 @@
-package jasi.parser;
+package jasi;
 public class Constants {
 
     //token type constants

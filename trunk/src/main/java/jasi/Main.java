@@ -12,12 +12,7 @@ public class Main {
     private final static Logger log = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        Parser p = new Parser();
-        AST ast = p.parseExpr();
-        Scheme interpreter = new Scheme();
-        Environment env = new Environment();
-        log.severe(":" + ast.toString() + ":");
-        log.severe(":value is:");
-        log.severe(Utils.stringify(interpreter.eval(ast, env)));
+        
+        log.severe(":" + SchemeReader.write(SchemeReader.read()) + ":");
     }
 }
