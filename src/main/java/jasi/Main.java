@@ -9,7 +9,8 @@ public class Main {
     private final static Logger log = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        
-        log.severe(":" + Utils.write(SchemeReader.read()) + ":");
+        Scheme s = new Scheme();
+        Environment env = new Environment();
+        log.severe(":" + Utils.write(s.eval(SchemeReader.read(), env)) + ":");
     }
 }

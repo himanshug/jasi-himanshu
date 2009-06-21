@@ -26,15 +26,5 @@ public class Pair {
     public void setCdr(Object cdr) {
         this.cdr = cdr;
     }
-
-    public static boolean isList(Object o) {
-        if(o == null)
-            return true;
-        
-        if(o instanceof Pair) {
-            return isList(((Pair)o).getCdr());
-        }
-        return false;
-    }
 }
 

@@ -1,20 +1,20 @@
 package jasi.semantics;
 
 import java.util.ArrayList;
-import java.util.List;
 
+import jasi.Pair;
 import jasi.semantics.procedure.PrimitiveProcedure;
 
-public class Scheme {/*
+public class Scheme {
 
     public Object eval(Object exp, Environment env) {
         if(isSelfEvaluating(exp)){
             return selfEvaluateValue(exp);
         }
         else if(isVariable(exp)) {
-            return env.getVariableValue(getVariableName(exp));
+            return getVariableValue(exp, env);
         }
-        /else if(isQuoted(exp)) {
+        /*else if(isQuoted(exp)) {
             exp.text;
         }
         else if(isAssignment(exp)) {
@@ -31,40 +31,35 @@ public class Scheme {/*
             }
         else if(isBegin(exp)) {
             evalSequence(exp, env);
-        }
+        }*/
         else if(isApplication(exp)) {
-            return apply(eval(operator(exp),env), operands(exp, env), env);
+            return apply((operator(exp, env)), 
+                    operands(exp, env), 
+                    env);
         }
-        else throw new RuntimeException("ast is not recognized: " + exp);
+        else throw new RuntimeException("exp is not recognized: " + exp);
     }
 
     //self evaluating
     private boolean isSelfEvaluating(Object exp) {
-        return ((ast instanceof CharAST) ||
-                (ast instanceof NumberAST) ||
-                (ast instanceof StringAST));
+        //todo: support booleans
+        return (Utils.isSchemeChar(exp) ||
+                Utils.isSchemeNumber(exp) ||
+                Utils.isSchemeString(exp) ||
+                Utils.isEmptyList(exp));
     }
 
     private Object selfEvaluateValue(Object exp) {
-        if(ast instanceof CharAST) {
-            return new Character(((CharAST)ast).getToken().getSpelling().charAt(2));
-        }
-        else if(ast instanceof StringAST) {
-            return new StringBuffer(((StringAST)ast).getToken().getSpelling());
-        }
-        else if(ast instanceof NumberAST) {
-            return new Double(((NumberAST)ast).getToken().getSpelling());
-        }
-        else throw new RuntimeException("not a self-evaluating ast:" + ast);
+        return exp;
     }
 
     //variable
     private boolean isVariable(Object exp) {
-        return (ast instanceof VariableAST);
+        return Utils.isSchemeVariable(exp);
     }
 
-    private String getVariableName(Object exp) {
-
+    private Object getVariableValue(Object exp, Environment env) {
+        return env.getVariableValue((String)exp);
     }
 
     
@@ -73,30 +68,29 @@ public class Scheme {/*
     
     //application
     private boolean isApplication(Object exp) {
-
+        return Utils.isSchemeList(exp);
     }
 
-    private Object operator(AST ast) {
-        if (ast instanceof ApplicationAST)
-            return ((ApplicationAST)ast).getVariable();
-        else
-            throw new RuntimeException("not an ApplicationAST :" + ast);
-    }
-
-    private Object operands(AST ast, Environment env) {
-        if(ast instanceof ApplicationAST) {
-            ArrayList<Object> operands = null;
-            List<AST> operandASTs = ((ApplicationAST)ast).getExpressions();
-            if(operandASTs.size() > 0) {
-                operands = new ArrayList<Object>();
-            }
-                for(AST a : operandASTs) {
-                    operands.add(eval(a, env));
-                }
-            return operands;
+    private Object operator(Object exp, Environment env) {
+        Pair p = (Pair)exp;
+        Object o = p.getCar();
+        if(Utils.isSchemeVariable(o)) {
+            return env.getVariableValue((String)o);
         }
-        else
-            throw new RuntimeException("not an ApplicationAST :" + ast);
+        else {
+            throw new RuntimeException("can not apply :" + Utils.write(o));
+        }
+    }
+
+    private Object operands(Object exp, Environment env) {
+            ArrayList operands = null;
+            Pair p = (Pair)((Pair)exp).getCdr();
+            while(!Utils.isEmptyList(p)) {
+                if(operands == null) operands = new ArrayList();
+                operands.add(eval(p.getCar(), env));
+                p = ((Pair)p.getCdr());
+            }
+            return operands;
     }
 
     private Object apply(Object proc, Object args, Environment env) {
@@ -107,5 +101,5 @@ public class Scheme {/*
         //..
         else
             throw new RuntimeException("not a procedure : " + proc);
-    }*/
+    }
 }
