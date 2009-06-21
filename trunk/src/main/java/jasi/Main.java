@@ -1,5 +1,6 @@
 package jasi;
 
+import jasi.parser.Reader;
 import jasi.semantics.*;
 
 import java.util.logging.Logger;
@@ -11,6 +12,6 @@ public class Main {
     public static void main(String[] args) {
         Scheme s = new Scheme();
         Environment env = new Environment();
-        log.severe(":" + (s.eval(SchemeReader.read(), env)).toString() + ":");
+        log.severe(":" + (s.eval(Reader.read(), env)).toString() + ":");
     }
 }

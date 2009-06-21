@@ -1,5 +1,7 @@
-package jasi;
+package jasi.parser;
 
+
+import jasi.Constants;
 
 import java.io.PushbackInputStream;
 import java.util.logging.Logger;
