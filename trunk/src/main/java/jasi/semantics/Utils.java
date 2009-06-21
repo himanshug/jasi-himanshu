@@ -1,5 +1,7 @@
 package jasi.semantics;
 
+import jasi.Pair;
+
 public class Utils {
 
     //characters
@@ -62,18 +64,50 @@ public class Utils {
         return (String)o;
     }
 
+    //pair
+    public static boolean isSchemePair(Object o) {
+        return (o instanceof Pair);
+    }
+
+    public static  String writeSchemePair(Object o) {
+        validateType(o, Pair.class);
+        Pair p = (Pair)o;
+
+        String result = "(" + write(p.getCar());
+        Object tmp = p.getCdr();
+        while(tmp != null && tmp instanceof Pair) {
+            p = (Pair)tmp;
+            result += " " + write(p.getCar());
+            tmp = p.getCdr();
+        }
+        
+        if(tmp == null) result += ")";
+        else result += (" . " + write(tmp) + ")");
+
+        return result;
+    }
+
+    //generic scheme expression writer
+    public static String write(Object o) {
+        //todo: support booleans, pair
+        if(isSchemeChar(o))
+            return writeSchemeChar(o);
+        else if(isSchemeNumber(o))
+            return writeSchemeNumber(o);
+        else if(isSchemeString(o))
+            return writeSchemeString(o);
+        else if(isSchemeVariable(o))
+            return writeSchemeVariable(o);
+        else if(isSchemePair(o))
+            return writeSchemePair(o);
+        else if(o == null) //empty list
+            return "()";
+        else
+            throw new RuntimeException("could not write:" + o);
+    }
+
     public static void validateType(Object o, Class c) {
         if(!c.isInstance(o))
             throw new RuntimeException("Object " + o + " not of type " + c.getName());
-    }
-
-    public static String stringify(Object arg) {
-        if(arg instanceof Double) {
-            return Integer.toString(((Double)arg).intValue());
-        }
-        //else ifs
-        else
-            throw new RuntimeException("could not stringify:" + arg);
-        
     }
 }

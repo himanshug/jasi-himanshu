@@ -2,8 +2,6 @@ package jasi;
 
 
 import java.io.PushbackInputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -31,17 +29,8 @@ public class Tokenizer {
     //From ZERO_STATE, when we read any non-whitespace char
     //other than the ones described above.
     private final static int VARIABLE_ZERO_STATE = 5;
-    
-    
-    private static Map<String, Integer> keywords;
-    private static PushbackInputStream in = new PushbackInputStream(System.in);
 
-    static{
-        keywords = new HashMap<String, Integer>();
-        keywords.put("if", new Integer(Constants.TOKEN_TYPE_IF));
-        keywords.put("define", new Integer(Constants.TOKEN_TYPE_DEFINE));
-        keywords.put("lambda", new Integer(Constants.TOKEN_TYPE_LAMBDA));
-    }
+    private static PushbackInputStream in = new PushbackInputStream(System.in);
 
     private static Token peekedToken;
 
@@ -138,7 +127,7 @@ public class Tokenizer {
                     case VARIABLE_ZERO_STATE:
                         if(isWhiteSpace(c) || c == ')') {
                             if(c == ')') in.unread(i);
-                            return getVariableToken(tokenBuilder.toString());
+                            return new Token(Constants.TOKEN_TYPE_VARIABLE, tokenBuilder.toString());
                         }
                         else tokenBuilder.append(c);
                         break;
@@ -159,12 +148,5 @@ public class Tokenizer {
 
     private static boolean isDigit(char c) {
         return Character.isDigit(c);
-    }
-
-    private static Token getVariableToken(String s) {
-        Integer i = keywords.get(s);
-        if(i != null)
-            return new Token(i.intValue(), s);
-        else return new Token(Constants.TOKEN_TYPE_VARIABLE, s);
     }
 }
