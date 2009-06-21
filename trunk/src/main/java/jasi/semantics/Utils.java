@@ -1,6 +1,6 @@
 package jasi.semantics;
 
-import jasi.Pair;
+import jasi.datatype.SPair;
 
 public class Utils {
 
@@ -18,8 +18,8 @@ public class Utils {
         if(o == null)
             return true;
         
-        if(o instanceof Pair) {
-            return isSchemeList(((Pair)o).getCdr());
+        if(o instanceof SPair) {
+            return isSchemeList(((SPair)o).getCdr());
         }
         return false;
     }

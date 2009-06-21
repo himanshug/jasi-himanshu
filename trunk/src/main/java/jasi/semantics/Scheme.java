@@ -2,8 +2,8 @@ package jasi.semantics;
 
 import java.util.ArrayList;
 
-import jasi.Pair;
 import jasi.datatype.SNumber;
+import jasi.datatype.SPair;
 import jasi.datatype.SVariable;
 import jasi.semantics.procedure.PrimitiveProcedure;
 
@@ -76,7 +76,7 @@ public class Scheme {
     }
 
     private Object operator(Object exp, Environment env) {
-        Pair p = (Pair)exp;
+        SPair p = (SPair)exp;
         Object o = p.getCar();
         if(o instanceof SVariable) {
             return env.getVariableValue((SVariable)o);
@@ -88,11 +88,11 @@ public class Scheme {
 
     private Object operands(Object exp, Environment env) {
             ArrayList operands = null;
-            Pair p = (Pair)((Pair)exp).getCdr();
+            SPair p = (SPair)((SPair)exp).getCdr();
             while(!Utils.isEmptyList(p)) {
                 if(operands == null) operands = new ArrayList();
                 operands.add(eval(p.getCar(), env));
-                p = ((Pair)p.getCdr());
+                p = ((SPair)p.getCdr());
             }
             return operands;
     }
@@ -101,8 +101,8 @@ public class Scheme {
         if(proc instanceof PrimitiveProcedure) {
             return ((PrimitiveProcedure)proc).apply(args, env);
         }
-        //else if compound..
-        //..
+        //else if compound procedure..
+        //else if macro..
         else
             throw new RuntimeException("not a procedure : " + proc);
     }
