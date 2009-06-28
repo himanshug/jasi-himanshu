@@ -20,8 +20,11 @@ public class CompoundProcedure extends Procedure {
     private Environment creationEnv;
 
     //argument list
-    //Note: right now we support fixed length argument list only
-    private List<SVariable> argVars;
+    private List<SVariable> argVars; //fixed variables
+    //list of all args appearing after fixed args
+    //kept null if procedure has fixed length arguments
+    private SVariable restArgs;
+
     //body
     private SPair body; //this will be a valid begin expression.
 
@@ -35,9 +38,14 @@ public class CompoundProcedure extends Procedure {
             if(params == null) params = new ArrayList<SVariable>();
             params.add((SVariable)o);
             
-            tmp = Utils.rest(tmp);
+            tmp = Utils.cdr(tmp);
+            if(tmp instanceof SVariable) {
+                restArgs = (SVariable)tmp;
+                break;
+            }
         }
         this.argVars = params;
+
         this.body = new SPair(SVariable.getInstance(Constants.KEYWORD_BEGIN), bodyArg);
         this.creationEnv = env;
     }
@@ -61,14 +69,30 @@ public class CompoundProcedure extends Procedure {
         int lenInputArgs = (args == null)? 0 : args.size();
         int lenArgVars = (argVars == null)? 0 : argVars.size();
         
-        if(lenArgVars != lenInputArgs)
-            throw new RuntimeException("expecing " + lenArgVars + " arguments, but" +
-                    " received " + lenInputArgs + ".");
-        
+        if(restArgs == null)  {
+            if(lenArgVars != lenInputArgs)
+                throw new RuntimeException("expecing " + lenArgVars + " arguments, but" +
+                        " received " + lenInputArgs + ".");
+        }
+        else {
+            if(lenArgVars > lenInputArgs)
+                throw new RuntimeException("expecing atleast " + lenArgVars + " arguments, but" +
+                        " received " + lenInputArgs + " only.");
+        }
+
         if(lenInputArgs == 0)
             env = creationEnv;
-        else {
+        else if(restArgs == null){
             env = creationEnv.extendEnvironment(argVars, args);
+        }
+        else {
+            Object inputRestArgs = SEmptyList.getInstance();
+            if(lenInputArgs > lenArgVars) {
+                for(int i= args.size()-1; args.size() > lenArgVars; i--)
+                    inputRestArgs = Utils.cons(args.remove(i), inputRestArgs);
+            }
+            env = creationEnv.extendEnvironment(argVars, args);
+            env.putBinding(restArgs, inputRestArgs);
         }
         return Scheme.eval(body, env);
     }
