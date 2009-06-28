@@ -1,5 +1,7 @@
 package jasi.datatype;
 
+import jasi.semantics.Utils;
+
 public class SPair {
     private Object car;
     private Object cdr;
@@ -29,14 +31,16 @@ public class SPair {
 
     public String toString() {
         String result = "(" + car.toString();
+
         Object tmp = cdr;
-        while(tmp != null && tmp instanceof SPair) {
+        while(!(tmp instanceof SEmptyList) && tmp instanceof SPair) {
             SPair p = (SPair)tmp;
             result += " " + p.getCar().toString();
             tmp = p.getCdr();
         }
         
-        if(tmp == null) result += ")";
+
+        if(tmp instanceof SEmptyList) result += ")";
         else result += (" . " + tmp.toString() + ")");
 
         return result;

@@ -1,34 +1,55 @@
 package jasi.parser;
 
+import java.util.logging.Logger;
+
 import jasi.Constants;
 import jasi.datatype.SBoolean;
 import jasi.datatype.SChar;
+import jasi.datatype.SEmptyList;
 import jasi.datatype.SNumber;
 import jasi.datatype.SPair;
 import jasi.datatype.SString;
 import jasi.datatype.SVariable;
+import jasi.semantics.Utils;
 
 public class Reader {
 
+    private final static Logger log = Logger.getLogger(Reader.class.getName());
+
     public static Object read() {
+        Object result = null;
         Token currentToken = Tokenizer.getNextToken();
         switch(currentToken.getType()) {
             //todo: support booleans, pair
             case Constants.TOKEN_TYPE_CHAR:
-                return new SChar(currentToken.getSpelling());
+                result = new SChar(currentToken.getSpelling());
+                log.finer("read scheme character:" + result);
+                break;
             case Constants.TOKEN_TYPE_BOOLEAN:
-                return new SBoolean(currentToken.getSpelling());
+                result = new SBoolean(currentToken.getSpelling());
+                log.finer("read scheme boolean:" + result);
+                break;
             case Constants.TOKEN_TYPE_NUMBER:
-                return new SNumber(currentToken.getSpelling());
+                result = new SNumber(currentToken.getSpelling());
+                log.finer("read scheme number:" + result);
+                break;
             case Constants.TOKEN_TYPE_STRING:
-                return new SString(currentToken.getSpelling());
+                result = new SString(currentToken.getSpelling());
+                log.finer("read scheme string:" + result);
+                return result;
             case Constants.TOKEN_TYPE_VARIABLE:
-                return SVariable.getInstance(currentToken.getSpelling());
+                result = SVariable.getInstance(currentToken.getSpelling());
+                log.finer("read scheme variable:" + result);
+                break;
             case Constants.TOKEN_TYPE_LPAREN:
-                return readSPair();
+                log.finer("start reading pair...");
+                result = readSPair();
+                log.finer("finished reading pair: " + result);
+                break;
             default:
                 throw new RuntimeException("could not recognize token: " + currentToken.toString());
         }
+        return result;
     }
 
     //by the time we reach here, left paren has been read.
@@ -39,7 +60,7 @@ public class Reader {
             if(token.getSpelling().equals("."))
                 throw new RuntimeException("ill formed dotted list");
             else {
-                p = new SPair(read(), null);
+                p = new SPair(read(), SEmptyList.getInstance());
                 token = Tokenizer.peekNextToken();
                 if(token.getType() != Constants.TOKEN_TYPE_RPAREN) {
                     if(token.getSpelling().equals(".")) {
@@ -56,8 +77,11 @@ public class Reader {
                     Tokenizer.getNextToken();
             }
         }
-        else //consume the right paren and return empty list
+        else {
+            //consume the right paren and return empty list
             Tokenizer.getNextToken();
+            return SEmptyList.getInstance();
+        }
 
         return p;
     }
