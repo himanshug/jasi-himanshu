@@ -56,6 +56,13 @@ public class Utils {
         return ((SPair)o).getCdr();
     }
 
+    public static SPair cons(Object car, Object cdr) {
+        SPair p = new SPair();
+        p.setCar(car);
+        p.setCdr(cdr);
+        return p;
+    }
+
     public static Object car(Object o) {
         return first(o);
     }
