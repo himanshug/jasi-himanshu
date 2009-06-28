@@ -2,12 +2,22 @@ package jasi.semantics;
 
 import java.util.logging.Logger;
 
+import jasi.datatype.SBoolean;
 import jasi.datatype.SEmptyList;
 import jasi.datatype.SPair;
 
 public class Utils {
 
     private final static Logger log = Logger.getLogger(Utils.class.getName());
+
+    //truth value
+    //everything but SBoolean(value = false) is true
+    public static boolean isTrue(Object o) {
+        if(o instanceof SBoolean)
+            return ((SBoolean)o).getValue();
+        else
+            return true;
+    }
 
     //list
     public static boolean isSchemeList(Object o) {
@@ -31,6 +41,7 @@ public class Utils {
             return 1 + getSchemeListLength(rest(o));
     }
 
+    //varioust list selector functions
     //returns the car(or first object) of a pair(list)
     public static Object first(Object o) {
         log.fine("getting first of list expression: " + o);
@@ -43,6 +54,26 @@ public class Utils {
         log.fine("getting rest of list expression: " + o);
         validateType(o, SPair.class);
         return ((SPair)o).getCdr();
+    }
+
+    public static Object car(Object o) {
+        return first(o);
+    }
+
+    public static Object cdr(Object o) {
+        return rest(o);
+    }
+
+    public static Object cadr(Object o) {
+        return car(cdr(o));
+    }
+
+    public static Object caddr(Object o) {
+        return car(cdr(cdr(o)));
+    }
+
+    public static Object cadddr(Object o) {
+        return car(cdr(cdr(cdr(o))));
     }
 
     public static void validateType(Object o, Class c) {

@@ -16,4 +16,5 @@ public class Constants {
     public final static String KEYWORD_DEFINITION = "define";
     public final static String KEYWORD_BEGIN = "begin";
     public final static String KEYWORD_LAMBDA = "lambda";
+    public final static String KEYWORD_IF = "if";
 }
