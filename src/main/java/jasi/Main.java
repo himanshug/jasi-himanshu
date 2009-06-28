@@ -14,10 +14,11 @@ public class Main {
     public static void main(String[] args) {
 
         Environment theGlobalEnv = createGlobalEnv();
-
-        Scheme s = new Scheme();
-        
-        log.severe(":" + (s.eval(Reader.read(), theGlobalEnv)).toString() + ":");
+        String prompt = ">";
+        while(true) {
+            System.out.print(prompt);
+            System.out.println(Scheme.eval(Reader.read(), theGlobalEnv));
+        }
     }
 
     private static Environment createGlobalEnv() {

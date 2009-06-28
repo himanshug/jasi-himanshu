@@ -6,12 +6,13 @@ import java.util.Map;
 //scheme variable
 public class SVariable {
 
-    private String value;
+    private String name;
 
+    //this is actually the symbol table also
     private static Map<String, SVariable> instances = new HashMap<String, SVariable>();
 
     private SVariable(String s) {
-        this.value = s;
+        this.name = s;
     }
 
     public static SVariable getInstance(String s) {
@@ -23,12 +24,12 @@ public class SVariable {
         return sv;
     }
 
-    public String getValue() {
-        return value;
+    public String getName() {
+        return name;
     }
 
     public String toString() {
-        return value;
+        return name;
     }
 }
 

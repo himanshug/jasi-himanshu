@@ -43,14 +43,14 @@ public class Tokenizer {
             peekedToken = null;
         }
         else t = nextToken();
-        log.fine("fetched token:" + t.toString());
+        log.finest("fetched token:" + t.toString());
         return t;
     }
 
     public static Token peekNextToken() {
         if(peekedToken == null)
             peekedToken = nextToken();
-        log.fine("peeked token:" + peekedToken.toString());
+        log.finest("peeked token:" + peekedToken.toString());
         return peekedToken;
     }
 
