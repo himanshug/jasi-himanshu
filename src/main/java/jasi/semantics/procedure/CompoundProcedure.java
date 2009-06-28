@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jasi.Constants;
+import jasi.datatype.SEmptyList;
 import jasi.datatype.SPair;
 import jasi.datatype.SVariable;
 import jasi.semantics.Environment;
 import jasi.semantics.Scheme;
+import jasi.semantics.Utils;
 
 public class CompoundProcedure extends Procedure {
 
@@ -23,9 +25,19 @@ public class CompoundProcedure extends Procedure {
     //body
     private SPair body; //this will be a valid begin expression.
 
-    public CompoundProcedure(List<SVariable> argVars, Object bodyArg,
+    public CompoundProcedure(Object paramArgs, Object bodyArg,
                                 Environment env) {
-        this.argVars = argVars;
+        ArrayList<SVariable> params = null;
+        Object tmp = paramArgs;
+        while(!(tmp instanceof SEmptyList)) {
+            Object o = Utils.first(tmp);
+            Utils.validateType(o, SVariable.class);
+            if(params == null) params = new ArrayList<SVariable>();
+            params.add((SVariable)o);
+            
+            tmp = Utils.rest(tmp);
+        }
+        this.argVars = params;
         this.body = new SPair(SVariable.getInstance(Constants.KEYWORD_BEGIN), bodyArg);
         this.creationEnv = env;
     }

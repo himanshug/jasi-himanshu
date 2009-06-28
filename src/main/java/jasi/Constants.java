@@ -9,6 +9,7 @@ public class Constants {
     public final static int TOKEN_TYPE_LPAREN = TOKEN_TYPE_BOOLEAN + 1;
     public final static int TOKEN_TYPE_RPAREN = TOKEN_TYPE_LPAREN + 1;
     public final static int TOKEN_TYPE_VARIABLE = TOKEN_TYPE_RPAREN + 1;
+    public final static int TOKEN_TYPE_QUOTE = TOKEN_TYPE_VARIABLE + 1;
 
     //various language key-words
     public final static String KEYWORD_QUOTE = "quote";

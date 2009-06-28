@@ -10,9 +10,6 @@ import java.util.logging.Logger;
 public class Main {
 
     //todo:
-    //support variable length param lambda
-    //support ' parsing
-    //fix # tokens parsing
     //macro-expand
     //eval
 

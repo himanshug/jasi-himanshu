@@ -71,6 +71,9 @@ public class Tokenizer {
                         else if(c == ')') {
                             return new Token(Constants.TOKEN_TYPE_RPAREN,")");
                         }
+                        else if(c == '\'') {
+                            return new Token(Constants.TOKEN_TYPE_QUOTE,"'");
+                        }
                         else if(!isWhiteSpace(c)) {
                             switch(c) {
                                 case '#':

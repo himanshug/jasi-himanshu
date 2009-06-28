@@ -34,17 +34,17 @@ public class Scheme {
         else if(isAssignment(exp)) {
             return evalAssignment(exp, env);
             }
-        else if(isDefinition(exp)) {
-            return evalDefinition(exp, env);
-            }
         else if(isIf(exp)) {
             return evalIf(exp, env);
+        }
+        else if(isBegin(exp)) {
+            return evalSequence(exp, env);
         }
         else if(isLambda(exp)) {
             return makeProcedure(lambdaParams(exp),lambdaBody(exp), env);
         }
-        else if(isBegin(exp)) {
-            return evalSequence(exp, env);
+        else if(isDefinition(exp)) {
+            return evalDefinition(exp, env);
         }
         else if(isApplication(exp)) {
             return apply((operator(exp, env)), 
@@ -86,7 +86,7 @@ public class Scheme {
     }
 
     private static Object evalQuoted(Object exp) {
-        return Utils.rest(exp);
+        return Utils.cadr(exp);
     }
 
     //assignment
@@ -104,24 +104,6 @@ public class Scheme {
 
     private static Object evalAssignment(Object exp, Environment env) {
         env.setBinding((SVariable)assignmentVariable(exp), eval(assignmentValue(exp), env));
-        return SUndefined.getInstance();
-    }
-
-    //definition
-    private static boolean isDefinition(Object exp) {
-        return isLanguageStmt(exp, Constants.KEYWORD_DEFINITION);
-    }
-
-    private static Object definitionVariable(Object exp) {
-        return Utils.cadr(exp);
-    }
-
-    private static Object definitionValue(Object exp) {
-        return Utils.caddr(exp);
-    }
-
-    private static Object evalDefinition(Object exp, Environment env) {
-        env.putBinding((SVariable)definitionVariable(exp), eval(definitionVariable(exp), env));
         return SUndefined.getInstance();
     }
 
@@ -176,31 +158,72 @@ public class Scheme {
         return isLanguageStmt(exp, Constants.KEYWORD_LAMBDA);
     }
 
-    //note: right now we only support fixed length argument
-    //procedure
-    private static List<SVariable> lambdaParams(Object exp) {
+    private static Object lambdaParams(Object exp) {
         log.fine("extracting params of lambda exp: " + exp );
-        ArrayList<SVariable> params = null;
-        Object tmp = Utils.first(Utils.rest(exp));
-        while(!(tmp instanceof SEmptyList)) {
-            Object o = Utils.first(tmp);
-            Utils.validateType(o, SVariable.class);
-            if(params == null) params = new ArrayList<SVariable>();
-            params.add((SVariable)o);
-            
-            tmp = Utils.rest(o);
-        }
-        return params;
+        return Utils.cadr(exp);
     }
 
     private static Object lambdaBody(Object exp) {
         log.fine("extracting body of lambda exp: " + exp );
-        return Utils.rest(Utils.rest(exp));
+        return Utils.cddr(exp);
     }
 
-    private static Object makeProcedure(List<SVariable> params, Object body,
+    private static Object makeProcedure(Object params, Object body,
                                         Environment env) {
         return new CompoundProcedure(params, body, env);
+    }
+
+    //definition
+    private static boolean isDefinition(Object exp) {
+        return isLanguageStmt(exp, Constants.KEYWORD_DEFINITION);
+    }
+
+    private static boolean isVariableDefinition(Object exp) {
+        log.fine("checking if " + exp + " is a variable definition");
+        return Utils.cadr(exp) instanceof SVariable;
+    }
+
+    private static Object variableDefinitionVariable(Object exp) {
+        return Utils.cadr(exp);
+    }
+
+    private static Object variableDefinitionValue(Object exp) {
+        return Utils.caddr(exp);
+    }
+
+    private static Object evalDefinition(Object exp, Environment env) {
+        if(isVariableDefinition(exp))
+            return evalVariableDefinition(exp, env);
+        else
+            return evalProcedureDefinition(exp, env);
+    }
+
+    private static Object evalVariableDefinition(Object exp, Environment env) {
+        env.putBinding((SVariable)variableDefinitionVariable(exp), 
+                eval(variableDefinitionValue(exp), env));
+        return SUndefined.getInstance();
+    }
+
+    private static Object procedureDefinitionVariable(Object exp) {
+        log.fine("extracting variable from procedure definition: " + exp);
+        return Utils.caadr(exp);
+    }
+
+    private static Object procedureDefinitionParams(Object exp) {
+        log.fine("extracting params from procedure definition: " + exp);
+        return Utils.cdadr(exp);
+    }
+
+    private static Object procedureDefinitionBody(Object exp) {
+        log.fine("extracting body from procedure definition: " + exp);
+        return Utils.cddr(exp);
+    }
+
+    private static Object evalProcedureDefinition(Object exp, Environment env) {
+        env.putBinding((SVariable)procedureDefinitionVariable(exp),
+                makeProcedure(procedureDefinitionParams(exp),
+                        procedureDefinitionBody(exp), env));
+        return SUndefined.getInstance();
     }
 
     //application

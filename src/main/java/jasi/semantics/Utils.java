@@ -44,14 +44,14 @@ public class Utils {
     //varioust list selector functions
     //returns the car(or first object) of a pair(list)
     public static Object first(Object o) {
-        log.fine("getting first of list expression: " + o);
+        log.finer("getting first of list expression: " + o);
         validateType(o, SPair.class);
         return ((SPair)o).getCar();
     }
 
     //returns the cdr(or rest) of a pair(list)
     public static Object rest(Object o) {
-        log.fine("getting rest of list expression: " + o);
+        log.finer("getting rest of list expression: " + o);
         validateType(o, SPair.class);
         return ((SPair)o).getCdr();
     }
@@ -76,8 +76,20 @@ public class Utils {
         return car(cdr(cdr(cdr(o))));
     }
 
+    public static Object caadr(Object o) {
+        return car(car(cdr(o)));
+    }
+
+    public static Object cddr(Object o) {
+        return cdr(cdr(o));
+    }
+
+    public static Object cdadr(Object o) {
+        return cdr(car(cdr(o)));
+    }
+
     public static void validateType(Object o, Class c) {
-        log.fine("validating type of :" + o + ": for class :" + c.getName());
+        log.finer("validating type of :" + o + ": for class :" + c.getName());
         if(o == null)
             throw new RuntimeException("found null, expected type: " + c.getName());
         else if(!c.isInstance(o))

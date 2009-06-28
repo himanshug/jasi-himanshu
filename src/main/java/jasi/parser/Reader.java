@@ -20,7 +20,6 @@ public class Reader {
         Object result = null;
         Token currentToken = Tokenizer.getNextToken();
         switch(currentToken.getType()) {
-            //todo: support booleans, pair
             case Constants.TOKEN_TYPE_CHAR:
                 result = new SChar(currentToken.getSpelling());
                 log.finer("read scheme character:" + result);
@@ -41,6 +40,17 @@ public class Reader {
                 result = SVariable.getInstance(currentToken.getSpelling());
                 log.finer("read scheme variable:" + result);
                 break;
+            case Constants.TOKEN_TYPE_QUOTE:
+                log.finer("start reading quoted...");
+                SPair tmp1 = new SPair();
+                tmp1.setCar(SVariable.getInstance(Constants.KEYWORD_QUOTE));
+                SPair tmp2 = new SPair();
+                tmp1.setCdr(tmp2);
+                tmp2.setCar(read());
+                tmp2.setCdr(SEmptyList.getInstance());
+                result = tmp1;
+                log.finer("finished reading quoted: " + result);
+                return result;
             case Constants.TOKEN_TYPE_LPAREN:
                 log.finer("start reading pair...");
                 result = readSPair();
