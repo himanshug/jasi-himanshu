@@ -62,6 +62,7 @@ public class Tokenizer {
             StringBuilder tokenBuilder = new StringBuilder();
             while((i = in.read()) != -1) {
                 char c = (char)i;
+                log.finest("found character :" + c + ": in state :" + state);
                 switch(state) {
                     case ZERO_STATE:
                         if(c == '(') {
@@ -107,15 +108,11 @@ public class Tokenizer {
                                 tokenBuilder.append(c);
                             else
                                 throw new RuntimeException("not valid # token.");
-                            if(!isWhiteSpace((char)in.read()))
-                                throw new RuntimeException("not valid # token");
                             return new Token(Constants.TOKEN_TYPE_BOOLEAN, tokenBuilder.toString());
                         }
                     case CHAR_ZERO_STATE:
                         if(!isWhiteSpace(c)) {
                             tokenBuilder.append(c);
-                            if(!isWhiteSpace((char)in.read()))
-                                throw new RuntimeException("not valid char token");
                             return new Token(Constants.TOKEN_TYPE_CHAR, tokenBuilder.toString());
                         }
                         else

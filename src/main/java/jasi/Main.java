@@ -9,6 +9,13 @@ import java.util.logging.Logger;
 
 public class Main {
 
+    //todo:
+    //support variable length param lambda
+    //support ' parsing
+    //fix # tokens parsing
+    //macro-expand
+    //eval
+
     private final static Logger log = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
