@@ -38,8 +38,8 @@ public class Scheme {
             return evalDefinition(exp, env);
             }
         else if(isIf(exp)) {
-            (evalIf(exp, env))
-            }
+            return evalIf(exp, env);
+        }
         else if(isLambda(exp)) {
             return makeProcedure(lambdaParams(exp),lambdaBody(exp), env);
         }
@@ -94,8 +94,16 @@ public class Scheme {
         return isLanguageStmt(exp, Constants.KEYWORD_ASSIGNMENT);
     }
 
+    private static Object assignmentVariable(Object exp) {
+        return Utils.cadr(exp);
+    }
+
+    private static Object assignmentValue(Object exp) {
+        return Utils.caddr(exp);
+    }
+
     private static Object evalAssignment(Object exp, Environment env) {
-        env.setBinding((SVariable)exp, eval(Utils.rest(exp), env));
+        env.setBinding((SVariable)assignmentVariable(exp), eval(assignmentValue(exp), env));
         return SUndefined.getInstance();
     }
 
@@ -104,10 +112,42 @@ public class Scheme {
         return isLanguageStmt(exp, Constants.KEYWORD_DEFINITION);
     }
 
+    private static Object definitionVariable(Object exp) {
+        return Utils.cadr(exp);
+    }
+
+    private static Object definitionValue(Object exp) {
+        return Utils.caddr(exp);
+    }
+
     private static Object evalDefinition(Object exp, Environment env) {
-        env.putBinding((SVariable)Utils.first(Utils.rest(exp)),
-                eval(Utils.first(Utils.rest(Utils.rest(exp))), env));
+        env.putBinding((SVariable)definitionVariable(exp), eval(definitionVariable(exp), env));
         return SUndefined.getInstance();
+    }
+
+    //if
+    private static boolean isIf(Object exp) {
+        return isLanguageStmt(exp, Constants.KEYWORD_IF);
+    }
+
+    private static Object ifPredicate(Object ifExp) {
+        return Utils.cadr(ifExp);
+    }
+
+    private static Object ifConsequent(Object ifExp) {
+        return Utils.caddr(ifExp);
+    }
+
+    private static Object ifAlternative(Object ifExp) {
+        return Utils.cadddr(ifExp);
+    }
+
+    private static Object evalIf(Object exp, Environment env) {
+        Object tmp = eval(ifPredicate(exp), env);
+        if(Utils.isTrue(tmp))
+            return eval(ifConsequent(exp), env);
+        else
+            return eval(ifAlternative(exp), env);
     }
 
     //begin -- sequence
@@ -163,16 +203,6 @@ public class Scheme {
         return new CompoundProcedure(params, body, env);
     }
 
-    //checks if given expression is a statement of the language
-    //with given keyword
-    //e.g. a definition statement exp will return true for isLanguageStmt(exp, "define")
-    private static boolean isLanguageStmt(Object exp, String keyword) {
-        log.fine("checking if :" + exp + ": is a scheme stmt with keyword: " + keyword);
-        Object o = Utils.first(exp);
-        return ((o instanceof SVariable) &&
-                ((SVariable)o).getName().equalsIgnoreCase(keyword));
-    }
-
     //application
     private static boolean isApplication(Object exp) {
         log.fine("checking if :" + exp + ": is an application stmt.");
@@ -207,5 +237,15 @@ public class Scheme {
         //else if macro..
         else
             throw new RuntimeException("not a procedure : " + proc);
+    }
+
+    //checks if given expression is a statement of the language
+    //with given keyword
+    //e.g. a definition statement exp will return true for isLanguageStmt(exp, "define")
+    private static boolean isLanguageStmt(Object exp, String keyword) {
+        log.fine("checking if :" + exp + ": is a scheme stmt with keyword: " + keyword);
+        Object o = Utils.first(exp);
+        return ((o instanceof SVariable) &&
+                ((SVariable)o).getName().equalsIgnoreCase(keyword));
     }
 }
