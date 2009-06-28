@@ -7,11 +7,6 @@ import jasi.parser.Reader;
 import jasi.semantics.Environment;
 
 public class PrimitiveProcedure extends Procedure {
-    //impl these first as they may result in some changes
-    //in design decisions.
-    //todo:also do lambda
-    //todo: macro-expand will modify the AST
-    //todo: eval
 
     //procecure Ids
     public final static int PLUS = 0;
