@@ -22,6 +22,11 @@ public class Scheme {
 
     public static Object eval(Object exp, Environment env) {
         log.fine("evaluating: " + exp);
+        
+        //todo
+        //implement cond and let
+        //application of procedure directly
+        
         if(isSelfEvaluating(exp)){
             return selfEvaluateValue(exp);
         }
