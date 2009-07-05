@@ -25,7 +25,7 @@ public class Reader {
                 log.finer("read scheme character:" + result);
                 break;
             case Constants.TOKEN_TYPE_BOOLEAN:
-                result = new SBoolean(currentToken.getSpelling());
+                result = SBoolean.getInstance((currentToken.getSpelling()));
                 log.finer("read scheme boolean:" + result);
                 break;
             case Constants.TOKEN_TYPE_NUMBER:
