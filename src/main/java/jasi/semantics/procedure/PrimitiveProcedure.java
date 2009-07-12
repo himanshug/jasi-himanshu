@@ -2,6 +2,7 @@ package jasi.semantics.procedure;
 
 import java.util.ArrayList;
 
+import jasi.Main;
 import jasi.datatype.SBoolean;
 import jasi.datatype.SChar;
 import jasi.datatype.SEmptyList;
@@ -454,7 +455,8 @@ public class PrimitiveProcedure extends Procedure {
     }
 
     private Object applyRead() {
-        return Reader.read();
+        //todo: may be we should get reader set for this class
+        return Main.reader.read();
     }
 
     private Object applyApply(ArrayList args, int min, int max, Environment env) {
