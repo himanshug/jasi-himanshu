@@ -1,5 +1,6 @@
 package jasi.semantics;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import jasi.datatype.SBoolean;
@@ -54,6 +55,29 @@ public class Utils {
         log.finer("getting rest of list expression: " + o);
         validateType(o, SPair.class);
         return ((SPair)o).getCdr();
+    }
+
+    //create a scheme list of given items
+    public static Object list(List<Object> items) {
+        int size = (items == null) ? 0 : items.size();
+        if(size > 0) {
+            SPair result = new SPair();
+            SPair sp = result;
+            for(int i = 0; i<size; i++) {
+                sp.setCar(items.get(i));
+                if(i == size-1) {
+                    sp.setCdr(SEmptyList.getInstance());
+                }
+                else {
+                    SPair tmp = new SPair();
+                    sp.setCdr(tmp);
+                    sp = tmp;
+                }
+            }
+            return result;
+        }
+        else
+            return SEmptyList.getInstance();
     }
 
     public static SPair cons(Object car, Object cdr) {
