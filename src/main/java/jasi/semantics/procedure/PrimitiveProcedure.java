@@ -23,8 +23,12 @@ public class PrimitiveProcedure extends Procedure {
     public final static int DIVISION = MULTIPLICATION + 1;
 
     public final static int NOT = DIVISION + 1;
+    public final static int GT = NOT + 1;
+    public final static int LT = GT + 1;
+    public final static int GT_EQ = LT + 1;
+    public final static int LT_EQ = GT_EQ + 1;
 
-    public final static int MAKE_STRING = NOT + 1;
+    public final static int MAKE_STRING = LT_EQ + 1;
 
     public final static int READ = 100;
     public final static int EVAL = READ + 1;
@@ -86,6 +90,14 @@ public class PrimitiveProcedure extends Procedure {
             return applyDivision(args, 1, n);
         case NOT:
             return applyNot(args, 1 ,1);
+        case GT:
+            return applyGreaterThan(args, 0, n);
+        case LT:
+            return applyLessThan(args, 0 ,n);
+        case GT_EQ:
+            return applyGreaterThanEqual(args, 0 , n);
+        case LT_EQ:
+            return applyLessThanEqual(args, 0 , n);
         case MAKE_STRING:
             return applyMakeString(args, 1, 2);
         case READ:
@@ -240,6 +252,99 @@ public class PrimitiveProcedure extends Procedure {
         validateArgsSize(args.size(), min, max);
 
         return SBoolean.getInstance(!Utils.isTrue(args.get(0)));
+    }
+
+    
+    private Object applyGreaterThan(ArrayList args, int min, int max) {
+        if (args == null || args.size() == 1) {
+            return SBoolean.getInstance(true);
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+
+        Object o = args.get(0);
+        Utils.validateType(o, SNumber.class);
+        double d = ((SNumber)o).getValue();
+        for(int i = 1; i < args.size(); i++) {
+            Object o2 = args.get(i);
+            Utils.validateType(o2, SNumber.class);
+            double d2 = ((SNumber)o2).getValue();
+            if(d2 < d)
+                d = d2;
+            else
+                return SBoolean.getInstance(false);
+        }
+
+        return SBoolean.getInstance(true);
+    }
+
+    private Object applyGreaterThanEqual(ArrayList args, int min, int max) {
+        if (args == null || args.size() == 1) {
+            return SBoolean.getInstance(true);
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+
+        Object o = args.get(0);
+        Utils.validateType(o, SNumber.class);
+        double d = ((SNumber)o).getValue();
+        for(int i = 1; i < args.size(); i++) {
+            Object o2 = args.get(i);
+            Utils.validateType(o2, SNumber.class);
+            double d2 = ((SNumber)o2).getValue();
+            if(d2 <= d)
+                d = d2;
+            else
+                return SBoolean.getInstance(false);
+        }
+
+        return SBoolean.getInstance(true);
+    }
+
+    private Object applyLessThan(ArrayList args, int min, int max) {
+        if (args == null || args.size() == 1) {
+            return SBoolean.getInstance(true);
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+
+        Object o = args.get(0);
+        Utils.validateType(o, SNumber.class);
+        double d = ((SNumber)o).getValue();
+        for(int i = 1; i < args.size(); i++) {
+            Object o2 = args.get(i);
+            Utils.validateType(o2, SNumber.class);
+            double d2 = ((SNumber)o2).getValue();
+            if(d2 > d)
+                d = d2;
+            else
+                return SBoolean.getInstance(false);
+        }
+
+        return SBoolean.getInstance(true);
+    }
+
+    private Object applyLessThanEqual(ArrayList args, int min, int max) {
+        if (args == null || args.size() == 1) {
+            return SBoolean.getInstance(true);
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+
+        Object o = args.get(0);
+        Utils.validateType(o, SNumber.class);
+        double d = ((SNumber)o).getValue();
+        for(int i = 1; i < args.size(); i++) {
+            Object o2 = args.get(i);
+            Utils.validateType(o2, SNumber.class);
+            double d2 = ((SNumber)o2).getValue();
+            if(d2 >= d)
+                d = d2;
+            else
+                return SBoolean.getInstance(false);
+        }
+
+        return SBoolean.getInstance(true);
     }
 
     private Object applyMakeString(ArrayList args, int min, int max) {
