@@ -24,9 +24,12 @@ public class PrimitiveProcedure extends Procedure {
 
     public final static int NOT = DIVISION + 1;
 
+    public final static int MAKE_STRING = NOT + 1;
+
     public final static int READ = 100;
     public final static int EVAL = READ + 1;
-    public final static int DISPLAY = EVAL + 1;
+    public final static int APPLY = EVAL + 1;
+    public final static int DISPLAY = APPLY + 1;
     public final static int WRITE = DISPLAY + 1;
     public final static int NEWLINE = WRITE + 1;
     public final static int CONS = NEWLINE + 1;
@@ -82,10 +85,14 @@ public class PrimitiveProcedure extends Procedure {
             return applyDivision(args);*/
         case NOT:
             return applyNot(args, 1 ,1);
+        case MAKE_STRING:
+            return applyMakeString(args, 1, 2);
         case READ:
             return applyRead();
         //case EVAL:
             //return applyEval(args);
+        case APPLY:
+            return applyApply(args, 2 ,2, env);
         case PRED_EQ:
             return applyPredEq(args , 2, 2);
         case PRED_EQV:
@@ -131,6 +138,64 @@ public class PrimitiveProcedure extends Procedure {
         default:
             throw new RuntimeException("not a valid primitive procedure id:" + id);
         }
+    }
+
+    //min-max is the number of minimum and maximum arguments this procedure
+    //can take.
+    private Object applyPlus(ArrayList args, int min, int max) {
+        double result = 0.0;
+        if(args == null)
+            return result;
+
+        //validate number of arguments
+        validateArgsSize(args.size(), min, max);
+
+        for(int i=0; i < args.size(); i++) {
+            Object o = args.get(i);
+            if(o instanceof SNumber) {
+                double d = ((SNumber)o).getValue();
+                result += d;
+            }
+            else {
+                throw new RuntimeException("invalid argument, not a number:" + o);
+            }
+        }
+        return new SNumber(result);
+    }
+
+    private Object applyNot(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+
+        return SBoolean.getInstance(!Utils.isTrue(args.get(0)));
+    }
+
+    private Object applyMakeString(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+
+        Object o = args.get(0);
+        Utils.validateType(o, SNumber.class);
+        int len = (int)((SNumber)o).getValue();
+        
+        StringBuffer sb = new StringBuffer(len);
+        char ch = ' ';
+        if(args.size() > 1) {
+            o = args.get(1);
+            Utils.validateType(o, SChar.class);
+            ch = ((SChar)o).getValue();
+        }
+        
+        while(len-- > 0) {
+            sb.append(ch);
+        }
+        return new SString(sb);
     }
 
     private Object applyPredEq(ArrayList args, int min, int max) {
@@ -214,41 +279,33 @@ public class PrimitiveProcedure extends Procedure {
         return false;
     }
 
-    //min-max is the number of minimum and maximum arguments this procedure
-    //can take.
-    private Object applyPlus(ArrayList args, int min, int max) {
-        double result = 0.0;
-        if(args == null)
-            return result;
-
-        //validate number of arguments
-        validateArgsSize(args.size(), min, max);
-
-        for(int i=0; i < args.size(); i++) {
-            Object o = args.get(i);
-            if(o instanceof SNumber) {
-                double d = ((SNumber)o).getValue();
-                result += d;
-            }
-            else {
-                throw new RuntimeException("invalid argument, not a number:" + o);
-            }
-        }
-        return new SNumber(result);
+    private Object applyRead() {
+        return Reader.read();
     }
 
-    private Object applyNot(ArrayList args, int min, int max) {
+    private Object applyApply(ArrayList args, int min, int max, Environment env) {
         if (args == null) {
             throw new RuntimeException("must provide arguments");
         }
         // validate number of arguments
         validateArgsSize(args.size(), min, max);
-
-        return SBoolean.getInstance(!Utils.isTrue(args.get(0)));
-    }
-
-    private Object applyRead() {
-        return Reader.read();
+        
+        Object proc = args.get(0);
+        Utils.validateType(proc, Procedure.class);
+        
+        if(args.size() > 0) {
+            Object argsList = args.get(1);
+            if(argsList instanceof SPair) {
+                ArrayList arr = new ArrayList();
+                while(argsList instanceof SPair) {
+                    arr.add(Utils.car(argsList));
+                    argsList = Utils.cdr(argsList);
+                }
+                return ((Procedure)proc).apply(arr, env);
+            }
+        }
+        
+        return ((Procedure)proc).apply(null, env);
     }
 
     //args should be array-list containing two elements, first is the object
