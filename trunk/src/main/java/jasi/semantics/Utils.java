@@ -119,6 +119,10 @@ public class Utils {
         return cdr(car(cdr(o)));
     }
 
+    public static Object cdddr(Object o) {
+        return cdr(cdr(cdr(o)));
+    }
+
     public static void validateType(Object o, Class c) {
         log.finer("validating type of :" + o + ": for class :" + c.getName());
         if(o == null)
