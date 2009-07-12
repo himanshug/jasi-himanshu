@@ -21,4 +21,8 @@ public class Constants {
     public final static String KEYWORD_COND = "cond";
     public final static String KEYWORD_ELSE = "else";
     public final static String KEYWORD_LET = "let";
+
+    //scheme char names
+    public final static String SCHEME_CHAR_SPACE = "space";
+    public final static String SCHEME_CHAR_NEWLINE = "newline";
 }

@@ -277,9 +277,9 @@ public class PrimitiveProcedure extends Procedure {
         validateArgsSize(args.size(), min, max);
         
         String s = args.get(0).toString();
-        s = s.replaceAll("\\", "\\\\");
-        s = s.replaceAll("#\\", "#");
-        s = s.replaceAll("\"", "\\\"");
+        //s = s.replaceAll("\\", "\\\\");
+        //s = s.replaceAll("#\\", "#");
+        //s = s.replaceAll("\"", "\\\"");
         System.out.print(s);
         return SUndefined.getInstance();
     }
