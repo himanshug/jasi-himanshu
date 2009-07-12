@@ -48,6 +48,10 @@ public class Environment {
         }
     }
 
+    public Environment extendEnvironment() {
+        return new Environment(this);
+    }
+
     public Environment extendEnvironment(List<SVariable> variables, List<Object> values) {
         int size = variables.size();
         if(size != values.size())

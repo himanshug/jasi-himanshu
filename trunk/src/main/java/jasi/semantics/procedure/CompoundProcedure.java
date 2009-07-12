@@ -32,19 +32,25 @@ public class CompoundProcedure extends Procedure {
                                 Environment env) {
         ArrayList<SVariable> params = null;
         Object tmp = paramArgs;
-        while(!(tmp instanceof SEmptyList)) {
-            Object o = Utils.first(tmp);
-            Utils.validateType(o, SVariable.class);
-            if(params == null) params = new ArrayList<SVariable>();
-            params.add((SVariable)o);
-            
-            tmp = Utils.cdr(tmp);
-            if(tmp instanceof SVariable) {
-                restArgs = (SVariable)tmp;
-                break;
-            }
+        if(paramArgs instanceof SVariable) {
+            restArgs = (SVariable)paramArgs;
+            this.argVars = new ArrayList<SVariable>();
         }
-        this.argVars = params;
+        else {
+            while(!(tmp instanceof SEmptyList)) {
+                Object o = Utils.first(tmp);
+                Utils.validateType(o, SVariable.class);
+                if(params == null) params = new ArrayList<SVariable>();
+                params.add((SVariable)o);
+                
+                tmp = Utils.cdr(tmp);
+                if(tmp instanceof SVariable) {
+                    restArgs = (SVariable)tmp;
+                    break;
+                }
+            }
+            this.argVars = params;
+        }
 
         this.body = new SPair(SVariable.getInstance(Constants.KEYWORD_BEGIN), bodyArg);
         this.creationEnv = env;
@@ -80,8 +86,14 @@ public class CompoundProcedure extends Procedure {
                         " received " + lenInputArgs + " only.");
         }
 
-        if(lenInputArgs == 0)
-            env = creationEnv;
+        if(lenInputArgs == 0) {
+            if(restArgs == null)
+                env = creationEnv;
+            else {
+                env = creationEnv.extendEnvironment();
+                env.putBinding(restArgs, SEmptyList.getInstance());
+            }
+        }
         else if(restArgs == null){
             env = creationEnv.extendEnvironment(argVars, args);
         }

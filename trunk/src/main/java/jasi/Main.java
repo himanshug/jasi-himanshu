@@ -36,6 +36,10 @@ public class Main {
         
         //logical operators
         env.putBinding(SVariable.getInstance("not"), new PrimitiveProcedure(PrimitiveProcedure.NOT));
+        env.putBinding(SVariable.getInstance(">"), new PrimitiveProcedure(PrimitiveProcedure.GT));
+        env.putBinding(SVariable.getInstance("<"), new PrimitiveProcedure(PrimitiveProcedure.LT));
+        env.putBinding(SVariable.getInstance(">="), new PrimitiveProcedure(PrimitiveProcedure.GT_EQ));
+        env.putBinding(SVariable.getInstance("<="), new PrimitiveProcedure(PrimitiveProcedure.LT_EQ));
         
         env.putBinding(SVariable.getInstance("make-string"), new PrimitiveProcedure(PrimitiveProcedure.MAKE_STRING));
         
