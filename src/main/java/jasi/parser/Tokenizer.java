@@ -22,10 +22,12 @@ public class Tokenizer {
     private final static int ZERO_STATE = 0;
     //From ZERO_STATE we read a '#'
     private final static int HASH_ZERO_STATE = ZERO_STATE + 1;
-    //From CHAR_ZERO_STATE we read a '\' right after a '#'
+    //From HASH_ZERO_STATE we read a '\' right after a '#'
     private final static int CHAR_ZERO_STATE = HASH_ZERO_STATE + 1;
+    //Afte CHAR_ZERO_STATE we read any non-whitespace char
+    private final static int CHAR_ONE_STATE = CHAR_ZERO_STATE + 1;
     //From ZERO_STATE we read a '"'
-    private final static int STRING_ZERO_STATE = CHAR_ZERO_STATE + 1;
+    private final static int STRING_ZERO_STATE = CHAR_ONE_STATE + 1;
     //From ZERO_STATE we read a digit
     private final static int NUMBER_ZERO_STATE = STRING_ZERO_STATE + 1;
     //start of a comment
@@ -127,10 +129,23 @@ public class Tokenizer {
                     case CHAR_ZERO_STATE:
                         if(!isWhiteSpace(c)) {
                             tokenBuilder.append(c);
+                            state = CHAR_ONE_STATE;
+                        }
+                        else {
+                            if(isNewlineChar(c))
+                                tokenBuilder.append(Constants.SCHEME_CHAR_NEWLINE);
+                            else tokenBuilder.append(Constants.SCHEME_CHAR_SPACE);
                             return new Token(Constants.TOKEN_TYPE_CHAR, tokenBuilder.toString());
                         }
-                        else
-                            throw new RuntimeException("expected visible character");
+                        break;
+                    case CHAR_ONE_STATE:
+                        if(isWhiteSpace(c) || c == ')' || c == '(') {
+                            in.unread(c);
+                            return new Token(Constants.TOKEN_TYPE_CHAR, tokenBuilder.toString());
+                        }
+                        else 
+                            tokenBuilder.append(c);
+                        break;
                     case STRING_ZERO_STATE:
                         tokenBuilder.append(c);
                         if(c == '"')
