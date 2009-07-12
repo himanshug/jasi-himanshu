@@ -1,5 +1,6 @@
 package jasi.parser;
 
+import java.io.InputStream;
 import java.util.logging.Logger;
 
 import jasi.Constants;
@@ -15,10 +16,16 @@ import jasi.semantics.Utils;
 public class Reader {
 
     private final static Logger log = Logger.getLogger(Reader.class.getName());
+    private Tokenizer tokenizer;
 
-    public static Object read() {
+    public Reader(InputStream in) {
+        tokenizer = new Tokenizer(in);
+    }
+
+    public Object read() {
         Object result = null;
-        Token currentToken = Tokenizer.getNextToken();
+        Token currentToken = tokenizer.getNextToken();
+        if(currentToken == null) return null;
         switch(currentToken.getType()) {
             case Constants.TOKEN_TYPE_CHAR:
                 result = new SChar(currentToken.getSpelling());
@@ -63,33 +70,33 @@ public class Reader {
     }
 
     //by the time we reach here, left paren has been read.
-    private static Object readSPair() {
+    private Object readSPair() {
         SPair p = null;
-        Token token = Tokenizer.peekNextToken();
+        Token token = tokenizer.peekNextToken();
         if(token.getType() != Constants.TOKEN_TYPE_RPAREN) {
             if(token.getSpelling().equals("."))
                 throw new RuntimeException("ill formed dotted list");
             else {
                 p = new SPair(read(), SEmptyList.getInstance());
-                token = Tokenizer.peekNextToken();
+                token = tokenizer.peekNextToken();
                 if(token.getType() != Constants.TOKEN_TYPE_RPAREN) {
                     if(token.getSpelling().equals(".")) {
                         //consume the dot
-                        Tokenizer.getNextToken();
+                        tokenizer.getNextToken();
                         p.setCdr(read());
-                        if(Tokenizer.getNextToken().getType() != Constants.TOKEN_TYPE_RPAREN)
+                        if(tokenizer.getNextToken().getType() != Constants.TOKEN_TYPE_RPAREN)
                             throw new RuntimeException("ill formed dotted list");
                     }
                     else
                         p.setCdr(readSPair());
                 }
                 else //just consume the right paren
-                    Tokenizer.getNextToken();
+                    tokenizer.getNextToken();
             }
         }
         else {
             //consume the right paren and return empty list
-            Tokenizer.getNextToken();
+            tokenizer.getNextToken();
             return SEmptyList.getInstance();
         }
 

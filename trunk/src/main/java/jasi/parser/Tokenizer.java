@@ -3,6 +3,7 @@ package jasi.parser;
 
 import jasi.Constants;
 
+import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.logging.Logger;
 
@@ -38,30 +39,34 @@ public class Tokenizer {
     //other than the ones described above.
     private final static int VARIABLE_ZERO_STATE = COMMENT_ZERO_STATE + 1;
 
-    private static PushbackInputStream in = new PushbackInputStream(System.in);
+    private PushbackInputStream in;
 
-    private static Token peekedToken;
+    private Token peekedToken;
 
-    public static Token getNextToken() {
+    public Tokenizer(InputStream in) {
+        this.in = new PushbackInputStream(in);
+    }
+
+    public Token getNextToken() {
         Token t = null;
         if(peekedToken != null) {
             t = peekedToken;
             peekedToken = null;
         }
         else t = nextToken();
-        log.finest("fetched token:" + t.toString());
+        log.finest("fetched token:" + t);
         return t;
     }
 
-    public static Token peekNextToken() {
+    public Token peekNextToken() {
         if(peekedToken == null)
             peekedToken = nextToken();
-        log.finest("peeked token:" + peekedToken.toString());
+        log.finest("peeked token:" + peekedToken);
         return peekedToken;
     }
 
     //reads next token from System input stream
-    private static Token nextToken() {
+    private Token nextToken() {
         try {
             int i = -1;
             int state = ZERO_STATE;
@@ -189,22 +194,22 @@ public class Tokenizer {
                         throw new RuntimeException("could not create token with:" + c +":");
                 }
             }
-            throw new RuntimeException("premature end of input");
+            return null; //end of input is reached
         }
         catch(Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    private static boolean isWhiteSpace(char c) {
+    private boolean isWhiteSpace(char c) {
         return Character.isWhitespace(c);
     }
 
-    private static boolean isDigit(char c) {
+    private boolean isDigit(char c) {
         return Character.isDigit(c);
     }
 
-    private static boolean isNewlineChar(char c) {
+    private boolean isNewlineChar(char c) {
         String newline = System.getProperty("line.separator");
         return newline.indexOf(c) >= 0;
     }
