@@ -19,11 +19,15 @@
                          (cons (cdr list)
                                (map (lambda (x) (cdr x)) lists))))))))
 
-;and
+;or, and
 ;ideally it should be implemented using macro, but anyway
-(define (and x . y)
+(define (or x . y)
   (if x #t
       (if (null? y) #f
+          (apply or y))))
+(define (and x . y)
+  (if (not x) #f
+      (if (null? y) #t
           (apply and y))))
 
 ;=
