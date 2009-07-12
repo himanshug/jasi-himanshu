@@ -30,6 +30,9 @@ public class Main {
         
         env.putBinding(SVariable.getInstance("+"), new PrimitiveProcedure(PrimitiveProcedure.PLUS));
         
+        //logical operators
+        env.putBinding(SVariable.getInstance("not"), new PrimitiveProcedure(PrimitiveProcedure.NOT));
+        
         //predicates
         env.putBinding(SVariable.getInstance("eq?"), new PrimitiveProcedure(PrimitiveProcedure.PRED_EQ));
         env.putBinding(SVariable.getInstance("eqv?"), new PrimitiveProcedure(PrimitiveProcedure.PRED_EQV));

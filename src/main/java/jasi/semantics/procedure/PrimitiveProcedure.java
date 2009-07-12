@@ -22,6 +22,8 @@ public class PrimitiveProcedure extends Procedure {
     public final static int MULTIPLICATION = MINUS + 1;
     public final static int DIVISION = MULTIPLICATION + 1;
 
+    public final static int NOT = DIVISION + 1;
+
     public final static int READ = 100;
     public final static int EVAL = READ + 1;
     public final static int DISPLAY = EVAL + 1;
@@ -78,6 +80,8 @@ public class PrimitiveProcedure extends Procedure {
             return applyMultiplication(args);
         case DIVISION:
             return applyDivision(args);*/
+        case NOT:
+            return applyNot(args, 1 ,1);
         case READ:
             return applyRead();
         //case EVAL:
@@ -231,6 +235,16 @@ public class PrimitiveProcedure extends Procedure {
             }
         }
         return new SNumber(result);
+    }
+
+    private Object applyNot(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+
+        return SBoolean.getInstance(!Utils.isTrue(args.get(0)));
     }
 
     private Object applyRead() {
@@ -444,7 +458,7 @@ public class PrimitiveProcedure extends Procedure {
         // validate number of arguments
         validateArgsSize(args.size(), min, max);
 
-        return (args.get(0) instanceof SEmptyList);
+        return SBoolean.getInstance((args.get(0) instanceof SEmptyList));
     }
 
     //validates if min <= size <= max.

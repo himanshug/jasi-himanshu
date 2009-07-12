@@ -69,7 +69,8 @@ public class Scheme {
                 (exp instanceof SNumber) ||
                 (exp instanceof SChar) ||
                 (exp instanceof SString) ||
-                (exp instanceof SBoolean));
+                (exp instanceof SBoolean) ||
+                (exp instanceof SUndefined));
     }
 
     private static Object selfEvaluateValue(Object exp) {
@@ -130,7 +131,10 @@ public class Scheme {
     }
 
     private static Object ifAlternative(Object ifExp) {
-        return Utils.cadddr(ifExp);
+        Object o = Utils.cdddr(ifExp);
+        if(o instanceof SEmptyList)
+            return SUndefined.getInstance();
+        else return Utils.car(o);
     }
 
     private static Object evalIf(Object exp, Environment env) {

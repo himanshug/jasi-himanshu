@@ -21,16 +21,18 @@ public class Tokenizer {
     //Tokenizer has just been called to read a token
     private final static int ZERO_STATE = 0;
     //From ZERO_STATE we read a '#'
-    private final static int HASH_ZERO_STATE = 1;
+    private final static int HASH_ZERO_STATE = ZERO_STATE + 1;
     //From CHAR_ZERO_STATE we read a '\' right after a '#'
-    private final static int CHAR_ZERO_STATE = 2;
+    private final static int CHAR_ZERO_STATE = HASH_ZERO_STATE + 1;
     //From ZERO_STATE we read a '"'
-    private final static int STRING_ZERO_STATE = 3;
+    private final static int STRING_ZERO_STATE = CHAR_ZERO_STATE + 1;
     //From ZERO_STATE we read a digit
-    private final static int NUMBER_ZERO_STATE = 4;
+    private final static int NUMBER_ZERO_STATE = STRING_ZERO_STATE + 1;
+    //start of a comment
+    private final static int COMMENT_ZERO_STATE = NUMBER_ZERO_STATE + 1;
     //From ZERO_STATE, when we read any non-whitespace char
     //other than the ones described above.
-    private final static int VARIABLE_ZERO_STATE = 5;
+    private final static int VARIABLE_ZERO_STATE = COMMENT_ZERO_STATE + 1;
 
     private static PushbackInputStream in = new PushbackInputStream(System.in);
 
@@ -74,6 +76,10 @@ public class Tokenizer {
                         else if(c == '\'') {
                             return new Token(Constants.TOKEN_TYPE_QUOTE,"'");
                         }
+                        else if(c == ';') {
+                            state = COMMENT_ZERO_STATE;
+                            break;
+                        }
                         else if(!isWhiteSpace(c)) {
                             switch(c) {
                                 case '#':
@@ -98,6 +104,11 @@ public class Tokenizer {
                                     state = VARIABLE_ZERO_STATE;
                             }
                             tokenBuilder.append(c);
+                        }
+                        break;
+                    case COMMENT_ZERO_STATE:
+                        if(isNewlineChar(c)) {
+                            state = ZERO_STATE;
                         }
                         break;
                     case HASH_ZERO_STATE:
@@ -159,5 +170,10 @@ public class Tokenizer {
 
     private static boolean isDigit(char c) {
         return Character.isDigit(c);
+    }
+
+    private static boolean isNewlineChar(char c) {
+        String newline = System.getProperty("line.separator");
+        return newline.indexOf(c) >= 0;
     }
 }
