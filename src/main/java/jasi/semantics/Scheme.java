@@ -23,10 +23,6 @@ public class Scheme {
     public static Object eval(Object exp, Environment env) {
         log.fine("evaluating: " + exp);
         
-        //todo
-        //implement cond and let
-        //application of procedure directly
-        
         if(isSelfEvaluating(exp)){
             return selfEvaluateValue(exp);
         }
@@ -42,8 +38,16 @@ public class Scheme {
         else if(isIf(exp)) {
             return evalIf(exp, env);
         }
+        //cond is a derived expression
+        else if(isCond(exp)) {
+            return eval(condToIf(exp), env);
+        }
         else if(isBegin(exp)) {
             return evalSequence(exp, env);
+        }
+        //let is a derived expression
+        else if(isLet(exp)) {
+            return eval(letToLambda(exp), env);
         }
         else if(isLambda(exp)) {
             return makeProcedure(lambdaParams(exp),lambdaBody(exp), env);
@@ -137,13 +141,67 @@ public class Scheme {
             return eval(ifAlternative(exp), env);
     }
 
+    //cond
+    private static boolean isCond(Object exp) {
+        return isLanguageStmt(exp, Constants.KEYWORD_COND);
+    }
+
+    private static Object condToIf(Object exp) {
+        /*
+         * (cond  ((pred1) <work1>)
+         *        ((pred2) <work2>)
+         *         ....
+         *        ((predn-1) <workn-1>)
+         *        (else <workn>))
+         *  ==>>
+         *  (if (pred1) <work1>
+         *      (if (pred2) <work2>
+         *          .......
+         *      (if (predn-1) <workn-1> <workn>))...) 
+         */
+        log.fine("converting cond exp to if ...");
+        log.fine(exp.toString());
+        Object clauses = Utils.cdr(exp);
+        Object result = condToIfRecur(clauses);
+        log.fine(result.toString());
+        log.fine("converted cond exp to if ...");
+        return result;
+    }
+
+    private static Object condToIfRecur(Object clauses) {
+        if(clauses instanceof SEmptyList) {
+            return SUndefined.getInstance();
+        }
+        else {
+            Object aClause = Utils.car(clauses);
+            if(isLanguageStmt(aClause, Constants.KEYWORD_ELSE)) {
+                //its an else clause
+                SVariable beginVar = SVariable.getInstance(Constants.KEYWORD_BEGIN);
+                return Utils.cons(beginVar, Utils.cdr(aClause));
+            }
+            else {
+                /*
+                 * (list 'if (car aClause) (cons 'begin (cdr aClause)) --recurse--)
+                 */
+                SVariable ifVar = SVariable.getInstance(Constants.KEYWORD_IF);
+                SVariable beginVar = SVariable.getInstance(Constants.KEYWORD_BEGIN);
+                ArrayList arr = new ArrayList();
+                arr.add(ifVar);
+                arr.add(Utils.car(aClause));
+                arr.add(Utils.cons(beginVar, Utils.cdr(aClause)));
+                arr.add(condToIfRecur(Utils.cdr(clauses)));
+                return Utils.list(arr);
+            }
+        }
+    }
+
     //begin -- sequence
     private static boolean isBegin(Object exp) {
         return isLanguageStmt(exp, Constants.KEYWORD_BEGIN);
     }
 
     private static Object evalSequence(Object exp, Environment env) {
-        Object result = null;
+        Object result = SUndefined.getInstance();
         Object o = Utils.rest(exp);
         while(!(o instanceof SEmptyList)) {
             if(o instanceof SPair) {
@@ -176,6 +234,43 @@ public class Scheme {
     private static Object makeProcedure(Object params, Object body,
                                         Environment env) {
         return new CompoundProcedure(params, body, env);
+    }
+
+    //let
+    private static boolean isLet(Object exp) {
+        return isLanguageStmt(exp, Constants.KEYWORD_LET);
+    }
+
+    private static Object letToLambda(Object exp) {
+        /*
+         * (let ((var1 val1) (var2 val2) ... (varn valn))
+         *      <body>)
+         * ==>
+         * ((lambda (var1 var2 ... varn) <body>) val1 val2 ... valn)
+         */
+        log.fine("converting let to lambda...");
+        log.fine(exp.toString());
+        Object vars_vals = Utils.cadr(exp);
+        ArrayList vars = null;
+        ArrayList vals = null;
+        while(!(vars_vals instanceof SEmptyList)) {
+            Object var_val = Utils.car(vars_vals);
+            if(vars == null) {
+                vars = new ArrayList();
+                vals = new ArrayList();
+            }
+            vars.add(Utils.car(var_val));
+            vals.add(Utils.cadr(var_val));
+            vars_vals = Utils.cdr(vars_vals);
+        }
+        
+        SVariable sv = SVariable.getInstance(Constants.KEYWORD_LAMBDA);
+        //(cons (cons 'lambda (cons (list var1 var2 .. varn) <body>)) (list val1 val2 ... valn))
+        Object result = Utils.cons(Utils.cons(sv, Utils.cons(Utils.list(vars), Utils.cddr(exp))),
+                    Utils.list(vals));
+        log.fine(result.toString());
+        log.fine("converted let to lambda...");
+        return result;
     }
 
     //definition
@@ -238,9 +333,9 @@ public class Scheme {
     }
 
     private static Object operator(Object exp, Environment env) {
-        Object o = Utils.first(exp);
-        if(o instanceof SVariable) {
-            return env.getBinding((SVariable)o);
+        Object o = eval(Utils.first(exp),env);
+        if(o instanceof Procedure) {
+            return o;
         }
         else {
             throw new RuntimeException("can not apply :" + o.toString());
