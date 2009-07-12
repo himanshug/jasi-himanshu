@@ -28,8 +28,10 @@ public class Tokenizer {
     private final static int CHAR_ONE_STATE = CHAR_ZERO_STATE + 1;
     //From ZERO_STATE we read a '"'
     private final static int STRING_ZERO_STATE = CHAR_ONE_STATE + 1;
+    //From ZERO_STATE we read a '-'
+    private final static int NEG_NUMBER_ZERO_STATE = STRING_ZERO_STATE + 1;
     //From ZERO_STATE we read a digit
-    private final static int NUMBER_ZERO_STATE = STRING_ZERO_STATE + 1;
+    private final static int NUMBER_ZERO_STATE = NEG_NUMBER_ZERO_STATE + 1;
     //start of a comment
     private final static int COMMENT_ZERO_STATE = NUMBER_ZERO_STATE + 1;
     //From ZERO_STATE, when we read any non-whitespace char
@@ -89,6 +91,9 @@ public class Tokenizer {
                                     break;
                                 case '"':
                                     state = STRING_ZERO_STATE;
+                                    break;
+                                case '-':
+                                    state = NEG_NUMBER_ZERO_STATE;
                                     break;
                                 case '0':
                                 case '1':
@@ -150,6 +155,18 @@ public class Tokenizer {
                         tokenBuilder.append(c);
                         if(c == '"')
                             return new Token(Constants.TOKEN_TYPE_STRING, tokenBuilder.toString());
+                        break;
+                    case NEG_NUMBER_ZERO_STATE:
+                        if(isWhiteSpace(c) || c == ')') {
+                            if(c == ')') in.unread(i);
+                            return new Token(Constants.TOKEN_TYPE_VARIABLE, tokenBuilder.toString());
+                        }
+                        else {
+                            if(isDigit(c))
+                                state = NUMBER_ZERO_STATE;
+                            else state = VARIABLE_ZERO_STATE;
+                        }
+                        tokenBuilder.append(c);
                         break;
                     case NUMBER_ZERO_STATE:
                         if(isDigit(c))

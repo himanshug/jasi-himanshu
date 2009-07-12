@@ -30,6 +30,9 @@ public class Main {
         Environment env = new Environment();
         
         env.putBinding(SVariable.getInstance("+"), new PrimitiveProcedure(PrimitiveProcedure.PLUS));
+        env.putBinding(SVariable.getInstance("-"), new PrimitiveProcedure(PrimitiveProcedure.MINUS));
+        env.putBinding(SVariable.getInstance("*"), new PrimitiveProcedure(PrimitiveProcedure.MULTIPLICATION));
+        env.putBinding(SVariable.getInstance("/"), new PrimitiveProcedure(PrimitiveProcedure.DIVISION));
         
         //logical operators
         env.putBinding(SVariable.getInstance("not"), new PrimitiveProcedure(PrimitiveProcedure.NOT));
@@ -67,7 +70,9 @@ public class Main {
         env.putBinding(SVariable.getInstance("read"), new PrimitiveProcedure(PrimitiveProcedure.READ));
         env.putBinding(SVariable.getInstance("apply"), new PrimitiveProcedure(PrimitiveProcedure.APPLY));
         //todo: eval
+        env.putBinding(SVariable.getInstance("eval"), new PrimitiveProcedure(PrimitiveProcedure.EVAL));
         
+        env.putBinding(SVariable.getInstance("error"), new PrimitiveProcedure(PrimitiveProcedure.ERROR));
         return env;
     }
 }
