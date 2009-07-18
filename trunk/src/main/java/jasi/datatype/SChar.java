@@ -11,10 +11,10 @@ public class SChar {
             this.value = s.charAt(2);
         else {
             String tmp = s.substring(2);
-            if(tmp.equals(Constants.SCHEME_CHAR_NEWLINE)) {
+            if(tmp.equalsIgnoreCase(Constants.SCHEME_CHAR_NEWLINE)) {
                 this.value = '\n';
             }
-            else if(tmp.equals(Constants.SCHEME_CHAR_SPACE)) {
+            else if(tmp.equalsIgnoreCase(Constants.SCHEME_CHAR_SPACE)) {
                 this.value = ' ';
             }
             else
