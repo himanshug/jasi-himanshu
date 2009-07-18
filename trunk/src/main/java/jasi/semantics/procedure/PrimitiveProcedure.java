@@ -30,6 +30,16 @@ public class PrimitiveProcedure extends Procedure {
     public final static int LT_EQ = GT_EQ + 1;
 
     public final static int MAKE_STRING = LT_EQ + 1;
+    public final static int SYMBOL_TO_STRING = MAKE_STRING + 1;
+    public final static int STRING_TO_SYMBOL = SYMBOL_TO_STRING + 1;
+    public final static int STRING_LENGTH = STRING_TO_SYMBOL + 1;
+    public final static int STRING_REF = STRING_LENGTH + 1;
+    public final static int STRING_SET = STRING_REF + 1;
+    public final static int NUMBER_TO_STRING = STRING_SET + 1;
+    public final static int STRING_TO_NUMBER = NUMBER_TO_STRING + 1;
+
+    public final static int CHAR_UPCASE = STRING_TO_NUMBER + 1;
+    public final static int CHAR_DOWNCASE = CHAR_UPCASE + 1;
 
     public final static int READ = 100;
     public final static int EVAL = READ + 1;
@@ -101,6 +111,24 @@ public class PrimitiveProcedure extends Procedure {
             return applyLessThanEqual(args, 0 , n);
         case MAKE_STRING:
             return applyMakeString(args, 1, 2);
+        case SYMBOL_TO_STRING:
+            return applySymbolToString(args, 1, 1);
+        case STRING_TO_SYMBOL:
+            return applyStringToSymbol(args, 1, 1);
+        case STRING_LENGTH:
+            return applyStringLength(args, 1, 1);
+        case STRING_REF:
+            return applyStringRef(args, 2, 2);
+        case STRING_SET:
+            return applyStringSet(args, 3, 3);
+        case NUMBER_TO_STRING:
+            return applyNumberToString(args, 1, 1);
+        case STRING_TO_NUMBER:
+            return applyStringToNumber(args, 1, 1);
+        case CHAR_UPCASE:
+            return applyCharUpCase(args, 1, 1);
+        case CHAR_DOWNCASE:
+            return applyCharDownCase(args, 1, 1);
         case READ:
             return applyRead();
         //case EVAL:
@@ -159,7 +187,7 @@ public class PrimitiveProcedure extends Procedure {
     //min-max is the number of minimum and maximum arguments this procedure
     //can take.
     private Object applyPlus(ArrayList args, int min, int max) {
-        double result = 0.0;
+        int result = 0;
         if(args == null)
             return new SNumber(result);
 
@@ -170,7 +198,7 @@ public class PrimitiveProcedure extends Procedure {
             Object o = args.get(i);
             if(o instanceof SNumber) {
                 double d = ((SNumber)o).getValue();
-                result += d;
+                result += Double.valueOf(d).intValue();
             }
             else {
                 throw new RuntimeException("invalid argument, not a number:" + o);
@@ -187,21 +215,21 @@ public class PrimitiveProcedure extends Procedure {
         //validate number of arguments
         validateArgsSize(args.size(), min, max);
 
-        double result = 0.0;
+        int result = 0;
         for(int i=0; i < args.size(); i++) {
             Object o = args.get(i);
             Utils.validateType(o, SNumber.class);
             double d = ((SNumber)o).getValue();
             if(i == 0 && args.size() > 1) {
-                result = d;
+                result = Double.valueOf(d).intValue();
             }
-            else result -= d;
+            else result -= Double.valueOf(d).intValue();
         }
         return new SNumber(result);
     }
 
     private Object applyMultiplication(ArrayList args, int min, int max) {
-        double result = 1.0;
+        int result = 1;
         if(args == null)
             return new SNumber(result);
 
@@ -212,7 +240,7 @@ public class PrimitiveProcedure extends Procedure {
             Object o = args.get(i);
             if(o instanceof SNumber) {
                 double d = ((SNumber)o).getValue();
-                result *= d;
+                result *= Double.valueOf(d).intValue();
             }
             else {
                 throw new RuntimeException("invalid argument, not a number:" + o);
@@ -222,7 +250,7 @@ public class PrimitiveProcedure extends Procedure {
     }
 
     private Object applyDivision(ArrayList args, int min, int max) {
-        double result = 1.0;
+        int result = 1;
         if(args == null)
             throw new RuntimeException("must provide arguments");
 
@@ -234,9 +262,9 @@ public class PrimitiveProcedure extends Procedure {
             if(o instanceof SNumber) {
                 double d = ((SNumber)o).getValue();
                 if(i == 0 && args.size() > 1)
-                    result = d;
+                    result = Double.valueOf(d).intValue();
                 else
-                    result /= d;
+                    result /= Double.valueOf(d).intValue();
             }
             else {
                 throw new RuntimeException("invalid argument, not a number:" + o);
@@ -373,6 +401,142 @@ public class PrimitiveProcedure extends Procedure {
         return new SString(sb);
     }
 
+    public Object applySymbolToString(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SVariable.class);
+        
+        return new SString(((SVariable)o).getName());
+    }
+
+    public Object applyStringToSymbol(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SString.class);
+        
+        return SVariable.getInstance(((SString)o).getValue().toString());
+    }
+
+    public Object applyStringLength(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SString.class);
+        
+        return new SNumber(((SString)o).getValue().length());
+    }
+
+    public Object applyStringRef(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o1 = args.get(0);
+        Object o2  = args.get(1);
+        Utils.validateType(o1, SString.class);
+        Utils.validateType(o2, SNumber.class);
+        return new SChar(((SString)o1).getValue().
+                charAt(Double.valueOf(((SNumber)o2).getValue()).intValue()));
+    }
+
+    public Object applyStringSet(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o1 = args.get(0);
+        Object o2 = args.get(1);
+        Object o3 = args.get(2);
+        Utils.validateType(o1, SString.class);
+        Utils.validateType(o2, SNumber.class);
+        Utils.validateType(o3, SChar.class);
+        
+        StringBuffer sb = ((SString)o1).getValue();
+        int i = Double.valueOf(((SNumber)o2).getValue()).intValue();
+        char c = ((SChar)o3).getValue();
+        //set c at i in sb
+        sb.setCharAt(i, c);
+        return SUndefined.getInstance();
+    }
+
+    public Object applyNumberToString(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SNumber.class);
+        
+        double d = ((SNumber)o).getValue();
+        return new SString(Integer.toString(Double.valueOf(d).intValue()));
+    }
+
+    public Object applyStringToNumber(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SString.class);
+        
+        String s = ((SString)o).getValue().toString();
+        return new SNumber(Integer.parseInt(s));
+    }
+
+    public Object applyCharUpCase(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SChar.class);
+        
+        char c = ((SChar)o).getValue();
+        if(Character.isLowerCase(c))
+            return new SChar(Character.toUpperCase(c));
+        else return o;
+    }
+
+    public Object applyCharDownCase(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SChar.class);
+        
+        char c = ((SChar)o).getValue();
+        if(Character.isUpperCase(c))
+            return new SChar(Character.toLowerCase(c));
+        else return o;
+    }
+
     private Object applyPredEq(ArrayList args, int min, int max) {
         if (args == null) {
             throw new RuntimeException("must provide arguments");
@@ -404,25 +568,7 @@ public class PrimitiveProcedure extends Procedure {
         Object o1 = args.get(0);
         Object o2 = args.get(1);
         
-        if(o1.getClass() == o2.getClass() && o1 instanceof SPair) {
-            SPair sp1 = (SPair)o1;
-            SPair sp2 = (SPair)o2;
-            while(true) {
-                o1 = sp1.getCar();
-                o2 = sp2.getCar();
-                if(!checkEqv(o1,o2)) return SBoolean.getInstance(false);
-                
-                o1 = sp1.getCdr();
-                o2 = sp1.getCdr();
-                if(!(o1 instanceof SPair && o2 instanceof SPair))
-                    return SBoolean.getInstance(checkEqv(o1,o2));
-                else {
-                    sp1 = (SPair)o1;
-                    sp2 = (SPair)o2;
-                }
-            }
-        }
-        else return SBoolean.getInstance(checkEqv(o1, o2));
+        return SBoolean.getInstance(checkEqual(o1, o2));
     }
 
     //checks if two objects should return #t for eqv?
@@ -445,13 +591,37 @@ public class PrimitiveProcedure extends Procedure {
         
         //true if they're both strings with same string value
         if(o1 instanceof SString)
-            return ((SString)o1).getValue().equals(((SString)o2).getValue());
+            return ((SString)o1).getValue().toString().equals(((SString)o2).getValue().toString());
         
         //todo:
         //true if they're procedures or pairs having same location
         
         //if nothing then false
         return false;
+    }
+
+    //checks if two objects should return #t for equal?
+    //on o1 and o2
+    private boolean checkEqual(Object o1, Object o2) {
+        if(o1.getClass() == o2.getClass() && o1 instanceof SPair) {
+            SPair sp1 = (SPair)o1;
+            SPair sp2 = (SPair)o2;
+            while(true) {
+                o1 = sp1.getCar();
+                o2 = sp2.getCar();
+                if(!checkEqual(o1,o2)) return false;
+                
+                o1 = sp1.getCdr();
+                o2 = sp1.getCdr();
+                if(!(o1 instanceof SPair && o2 instanceof SPair))
+                    return checkEqv(o1,o2);
+                else {
+                    sp1 = (SPair)o1;
+                    sp2 = (SPair)o2;
+                }
+            }
+        }
+        else return checkEqv(o1, o2);
     }
 
     private Object applyRead() {

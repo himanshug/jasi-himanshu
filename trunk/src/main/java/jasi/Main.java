@@ -59,6 +59,16 @@ public class Main {
         env.putBinding(SVariable.getInstance("<="), new PrimitiveProcedure(PrimitiveProcedure.LT_EQ));
         
         env.putBinding(SVariable.getInstance("make-string"), new PrimitiveProcedure(PrimitiveProcedure.MAKE_STRING));
+        env.putBinding(SVariable.getInstance("symbol->string"), new PrimitiveProcedure(PrimitiveProcedure.SYMBOL_TO_STRING));
+        env.putBinding(SVariable.getInstance("string->symbol"), new PrimitiveProcedure(PrimitiveProcedure.STRING_TO_SYMBOL));
+        env.putBinding(SVariable.getInstance("string-length"), new PrimitiveProcedure(PrimitiveProcedure.STRING_LENGTH));
+        env.putBinding(SVariable.getInstance("string-ref"), new PrimitiveProcedure(PrimitiveProcedure.STRING_REF));
+        env.putBinding(SVariable.getInstance("string-set!"), new PrimitiveProcedure(PrimitiveProcedure.STRING_SET));
+        env.putBinding(SVariable.getInstance("number->string"), new PrimitiveProcedure(PrimitiveProcedure.NUMBER_TO_STRING));
+        env.putBinding(SVariable.getInstance("string->number"), new PrimitiveProcedure(PrimitiveProcedure.STRING_TO_NUMBER));
+        
+        env.putBinding(SVariable.getInstance("char-upcase"), new PrimitiveProcedure(PrimitiveProcedure.CHAR_UPCASE));
+        env.putBinding(SVariable.getInstance("char-downcase"), new PrimitiveProcedure(PrimitiveProcedure.CHAR_DOWNCASE));
         
         //predicates
         env.putBinding(SVariable.getInstance("eq?"), new PrimitiveProcedure(PrimitiveProcedure.PRED_EQ));

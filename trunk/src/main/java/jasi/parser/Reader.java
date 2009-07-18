@@ -40,7 +40,11 @@ public class Reader {
                 log.finer("read scheme number:" + result);
                 break;
             case Constants.TOKEN_TYPE_STRING:
-                result = new SString(currentToken.getSpelling());
+                //remove leading and trailing double quotes from the token
+                //spelling
+                String tmp = currentToken.getSpelling();
+                tmp = tmp.substring(1, tmp.length()-1);
+                result = new SString(tmp);
                 log.finer("read scheme string:" + result);
                 return result;
             case Constants.TOKEN_TYPE_VARIABLE:

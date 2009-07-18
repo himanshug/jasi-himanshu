@@ -16,6 +16,7 @@ public class SVariable {
     }
 
     public static SVariable getInstance(String s) {
+        s = s.toLowerCase();
         SVariable sv = instances.get(s);
         if(sv == null) {
             sv = new SVariable(s);

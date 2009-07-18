@@ -87,12 +87,9 @@ public class CompoundProcedure extends Procedure {
         }
 
         if(lenInputArgs == 0) {
-            if(restArgs == null)
-                env = creationEnv;
-            else {
-                env = creationEnv.extendEnvironment();
+            env = creationEnv.extendEnvironment();
+            if(restArgs != null)
                 env.putBinding(restArgs, SEmptyList.getInstance());
-            }
         }
         else if(restArgs == null){
             env = creationEnv.extendEnvironment(argVars, args);
