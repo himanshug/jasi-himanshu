@@ -40,6 +40,12 @@ public class PrimitiveProcedure extends Procedure {
 
     public final static int CHAR_UPCASE = STRING_TO_NUMBER + 1;
     public final static int CHAR_DOWNCASE = CHAR_UPCASE + 1;
+    public final static int CHAR_LT = CHAR_DOWNCASE + 1;
+    public final static int CHAR_PRED_ALPHABETIC = CHAR_LT + 1;
+    public final static int CHAR_PRED_NUMERIC = CHAR_PRED_ALPHABETIC + 1;
+    public final static int CHAR_PRED_WHITESPACE = CHAR_PRED_NUMERIC + 1;
+    public final static int CHAR_PRED_LOWERCASE = CHAR_PRED_WHITESPACE + 1;
+    public final static int CHAR_PRED_UPPERCASE = CHAR_PRED_LOWERCASE + 1;
 
     public final static int READ = 100;
     public final static int EVAL = READ + 1;
@@ -129,6 +135,18 @@ public class PrimitiveProcedure extends Procedure {
             return applyCharUpCase(args, 1, 1);
         case CHAR_DOWNCASE:
             return applyCharDownCase(args, 1, 1);
+        case CHAR_LT:
+            return applyCharLess(args, 2, 2);
+        case CHAR_PRED_ALPHABETIC:
+            return applyCharPredAlphabetic(args, 1, 1);
+        case CHAR_PRED_NUMERIC:
+            return applyCharPredNumeric(args, 1, 1);
+        case CHAR_PRED_WHITESPACE:
+            return applyCharPredWhitespace(args, 1, 1);
+        case CHAR_PRED_LOWERCASE:
+            return applyCharPredLowerCase(args, 1, 1);
+        case CHAR_PRED_UPPERCASE:
+            return applyCharPredUpperCase(args, 1, 1);
         case READ:
             return applyRead();
         //case EVAL:
@@ -502,7 +520,13 @@ public class PrimitiveProcedure extends Procedure {
         Utils.validateType(o, SString.class);
         
         String s = ((SString)o).getValue().toString();
-        return new SNumber(Integer.parseInt(s));
+        
+        try {
+            return new SNumber(Integer.parseInt(s));
+        }
+        catch(NumberFormatException ex) {
+            return SBoolean.getInstance(false);
+        }
     }
 
     public Object applyCharUpCase(ArrayList args, int min, int max) {
@@ -535,6 +559,93 @@ public class PrimitiveProcedure extends Procedure {
         if(Character.isUpperCase(c))
             return new SChar(Character.toLowerCase(c));
         else return o;
+    }
+
+    public Object applyCharLess(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o1 = args.get(0);
+        Object o2 = args.get(1);
+        Utils.validateType(o1, SChar.class);
+        Utils.validateType(o2, SChar.class);
+        
+        Character c1 = Character.valueOf(((SChar)o1).getValue());
+        Character c2 = Character.valueOf(((SChar)o2).getValue());
+        return SBoolean.getInstance(c1.compareTo(c2) < 0);
+    }
+
+    public Object applyCharPredAlphabetic(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SChar.class);
+        
+        char c = ((SChar)o).getValue();
+        return SBoolean.getInstance(Character.isLetter(c));
+    }
+
+    public Object applyCharPredNumeric(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SChar.class);
+        
+        char c = ((SChar)o).getValue();
+        return SBoolean.getInstance(Character.isDigit(c));
+    }
+
+    public Object applyCharPredWhitespace(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SChar.class);
+        
+        char c = ((SChar)o).getValue();
+        return SBoolean.getInstance(Character.isWhitespace(c));
+    }
+
+    public Object applyCharPredLowerCase(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SChar.class);
+        
+        char c = ((SChar)o).getValue();
+        return SBoolean.getInstance(Character.isLowerCase(c));
+    }
+
+    public Object applyCharPredUpperCase(ArrayList args, int min, int max) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        Object o = args.get(0);
+        Utils.validateType(o, SChar.class);
+        
+        char c = ((SChar)o).getValue();
+        return SBoolean.getInstance(Character.isUpperCase(c));
     }
 
     private Object applyPredEq(ArrayList args, int min, int max) {

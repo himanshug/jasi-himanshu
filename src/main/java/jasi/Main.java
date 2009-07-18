@@ -69,6 +69,12 @@ public class Main {
         
         env.putBinding(SVariable.getInstance("char-upcase"), new PrimitiveProcedure(PrimitiveProcedure.CHAR_UPCASE));
         env.putBinding(SVariable.getInstance("char-downcase"), new PrimitiveProcedure(PrimitiveProcedure.CHAR_DOWNCASE));
+        env.putBinding(SVariable.getInstance("char<?"), new PrimitiveProcedure(PrimitiveProcedure.CHAR_LT));
+        env.putBinding(SVariable.getInstance("char-alphabetic?"), new PrimitiveProcedure(PrimitiveProcedure.CHAR_PRED_ALPHABETIC));
+        env.putBinding(SVariable.getInstance("char-numeric?"), new PrimitiveProcedure(PrimitiveProcedure.CHAR_PRED_NUMERIC));
+        env.putBinding(SVariable.getInstance("char-whitespace?"), new PrimitiveProcedure(PrimitiveProcedure.CHAR_PRED_WHITESPACE));
+        env.putBinding(SVariable.getInstance("char-lower-case?"), new PrimitiveProcedure(PrimitiveProcedure.CHAR_PRED_LOWERCASE));
+        env.putBinding(SVariable.getInstance("char-upper-case?"), new PrimitiveProcedure(PrimitiveProcedure.CHAR_PRED_UPPERCASE));
         
         //predicates
         env.putBinding(SVariable.getInstance("eq?"), new PrimitiveProcedure(PrimitiveProcedure.PRED_EQ));

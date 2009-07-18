@@ -2,9 +2,21 @@
 
 ;map
 ;supports single list only
-(define (map proc list)
+(define (map-single-list proc list)
   (if (null? list) nil
-      (cons (proc (car list)) (map proc (cdr list)))))
+      (cons (proc (car list)) (map-single-list proc (cdr list)))))
+(define (map proc list . lists)
+  (if (null? list)
+      nil
+      (if (null? lists)
+          (map-single-list proc list)
+          (cons (apply proc
+                       (map-single-list (lambda (x) (car x))
+                                        (cons list lists)))
+                (apply map 
+                       (cons proc
+                             (cons (cdr list)
+                                   (map-single-list (lambda (x) (cdr x)) lists))))))))
 
 ;for-each
 (define (for-each proc list . lists)
@@ -13,11 +25,11 @@
           (begin (proc (car list)) (for-each proc (cdr list)))
           (begin
             (apply proc (cons (car list)
-                              (map (lambda (x) (car x)) lists)))
+                              (map-single-list (lambda (x) (car x)) lists)))
             (apply for-each
                    (cons proc
                          (cons (cdr list)
-                               (map (lambda (x) (cdr x)) lists))))))))
+                               (map-single-list (lambda (x) (cdr x)) lists))))))))
 
 ;or, and
 ;ideally it should be implemented using macro, but anyway
@@ -150,4 +162,20 @@
 ;even, odd, gcd, lcm
 
 
-  
+;; char related
+(define (char>? c1 c2)
+  (not (or (char<? c1 c2) (char=? c1 c2))))
+(define (char<=? c1 c2)
+  (or (char<? c1 c2) (char=? c1 c2)))
+(define (char>=? c1 c2)
+  (not (char<? c1 c2)))
+(define (char-ci=? c1 c2)
+  (char=? (char-downcase c1) (char-downcase c2)))
+(define (char-ci<? c1 c2)
+  (char<? (char-downcase c1) (char-downcase c2)))
+(define (char-ci>? c1 c2)
+  (char>? (char-downcase c1) (char-downcase c2)))
+(define (char-ci<=? c1 c2)
+  (char<=? (char-downcase c1) (char-downcase c2)))
+(define (char-ci>=? c1 c2)
+  (char>=? (char-downcase c1) (char-downcase c2)))
