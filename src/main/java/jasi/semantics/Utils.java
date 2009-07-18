@@ -26,9 +26,16 @@ public class Utils {
             return true;
         
         if(o instanceof SPair) {
-            return isSchemeList(((SPair)o).getCdr());
+            Object next = ((SPair)o).getCdr();
+            /* this check is important to avoid infinite recursion that 
+             * can happen if someone does something like following
+             * (define x (list 'a))
+             * (set-cdr! x x)
+             */
+            if(next != o)
+                return isSchemeList(next);
         }
-        log.finer("this expression :" + o + ": found not to be a list");
+        log.finer("this expression found not to be a list");
         return false;
     }
 
