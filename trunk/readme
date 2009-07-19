@@ -1,0 +1,44 @@
+##################### OVERVIEW #############################
+
+JASI - Just Another Scheme Interpreter
+@Author : Himanshu Gupta <g.himanshu@gmail.com>
+
+JASI started after I finished reading SICP (Structure and Interpretation of Computer Programs). I just wanted to learn what it takes to write an interpreter from scratch. This implementation of mine doesn't solve any practical purpose(as of now atleast) and not an optimized one, I gave more importance to modularity and easy readability of the code.
+
+It complies to a subset of R4RS and passes a subset of R4RS tests written by Aubrey Jaffrey, that subset is available with the code in the file tests.scm in top level directory.
+
+Code Organization:
+It consists of 4 main packages..
+
+1. jasi.parser
+This package contains the classes responsible reading the scheme expressions and provide the functionality of "read". Tokenizer.java does the job of lexical analysis and Reader.java gets tokens from it, reads S-expressions.
+
+2. jasi.datatypes
+The classes here represent various scheme datatypes.
+
+3. jasi.symantics
+This is the engine of the interpreter. Scheme.java has the "eval" to evaluate s-exps and this is where the language behavior is realized. Environment.java contains the code for maintaining environment and also initial  global  enironment that becomes to the user in the interactive mode. If one wants add another primitive procedure(that can't be implemented in scheme using existing primitives), then he needs to add binding for same in the global environment in Environment.initGlobalEnv() method.
+
+4. jasi.symantics.procedure
+CompoundProcedure.java contains the behavior of user defined procedures. PrimitiveProcedure.java contains implementation of (almost)all the primitive procedures.
+
+I've tried to implement only the essential functionality in java, other primitives are written in scheme itself in the file src/main/resources/preloadedscm.scm that is loaded at interpreter startup. If one needs to add another primitive that can be written using the existing primitives, this is the place.
+
+Things that I may want to implement in future:
+Macros
+Optimized tail recursion
+
+
+############### HOW TO USE #####################
+1. Compile and Package in to the jar, run..
+$mvn clean package 
+
+2. To start the interpreter, run..
+$./jasi.sh
+
+I've tested it on following versions of maven and jdk..
+
+/usr/lib/java/jdk1.6.0_10
+Maven version: 2.0.4
+
+##################### THANK YOU ###################
