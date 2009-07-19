@@ -1,3 +1,6 @@
+;;These tests are a subset of
+;;Aubrey Jaffrey's R4RS compliance tests suite.
+;;
 (define cur-section '())
 (define errs '())
 (define SECTION (lambda args
@@ -243,7 +246,7 @@
 (test '(a (b) (c)) append '(a (b)) '((c)))
 (test '(a b c . d) append '(a b) '(c . d))
 (test 'a append '() 'a)
-(test '(x y z) append '(x y z) ()) ; norvig
+(test '(x y z) append '(x y z) ())
 
 (test '(c b a) reverse '(a b c))
 (test '((e (f)) d (b c) a) reverse '(a (b c) d (e (f))))
@@ -551,4 +554,4 @@
 (test '(5 7 9) map + '(1 2 3) '(4 5 6))
 (test '() map cadr '())
 (newline)
-"last item in file"
+"Finished all tests!"
