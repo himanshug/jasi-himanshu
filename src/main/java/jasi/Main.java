@@ -29,6 +29,14 @@ public class Main {
             Scheme.eval(exp, theGlobalEnv);
             exp = tmpReader.read();
         }
+        //print welcome message
+        System.out.println("");
+        System.out.println("#################### JASI ####################" );
+        System.out.println("####### Just Another Scheme Interpreter ######");
+        System.out.println("### http://code.google.com/p/jasi-himanshu/ ##");
+        System.out.println("@Author: Himanshu Gupta <g.himanshu@gmail.com>");
+        System.out.println("");
+        
         //now the user prompt
         String prompt = ">";
         while(true) {
