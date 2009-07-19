@@ -13,6 +13,7 @@ import jasi.datatype.SUndefined;
 import jasi.datatype.SVariable;
 import jasi.parser.Reader;
 import jasi.semantics.Environment;
+import jasi.semantics.Scheme;
 import jasi.semantics.Utils;
 
 public class PrimitiveProcedure extends Procedure {
@@ -51,7 +52,8 @@ public class PrimitiveProcedure extends Procedure {
     public final static int EVAL = READ + 1;
     public final static int APPLY = EVAL + 1;
     public final static int ERROR = APPLY + 1;
-    public final static int DISPLAY = ERROR + 1;
+    public final static int INTERACTION_ENVIRONMENT = ERROR + 1;
+    public final static int DISPLAY = INTERACTION_ENVIRONMENT + 1;
     public final static int WRITE = DISPLAY + 1;
     public final static int NEWLINE = WRITE + 1;
     public final static int CONS = NEWLINE + 1;
@@ -149,12 +151,14 @@ public class PrimitiveProcedure extends Procedure {
             return applyCharPredUpperCase(args, 1, 1);
         case READ:
             return applyRead();
-        //case EVAL:
-            //return applyEval(args);
+        case EVAL:
+            return applyEval(args, 1 ,2, env);
         case ERROR:
             return applyError(args, 1, 1);
         case APPLY:
             return applyApply(args, 2 ,2, env);
+        case INTERACTION_ENVIRONMENT:
+            return applyInteractionEnvironment(args, 0 ,0);
         case PRED_EQ:
             return applyPredEq(args , 2, 2);
         case PRED_EQV:
@@ -740,6 +744,19 @@ public class PrimitiveProcedure extends Procedure {
         return Main.reader.read();
     }
 
+    private Object applyEval(ArrayList args, int min, int max, Environment env) {
+        if (args == null) {
+            throw new RuntimeException("must provide arguments");
+        }
+        // validate number of arguments
+        validateArgsSize(args.size(), min, max);
+        
+        if(args.size() > 1)
+            env = (Environment)args.get(1);
+        
+        return Scheme.eval(args.get(0), env);
+    }
+
     private Object applyApply(ArrayList args, int min, int max, Environment env) {
         if (args == null) {
             throw new RuntimeException("must provide arguments");
@@ -773,6 +790,15 @@ public class PrimitiveProcedure extends Procedure {
         validateArgsSize(args.size(), min, max);
         
         throw new RuntimeException(args.get(0).toString());
+    }
+
+    private Object applyInteractionEnvironment(ArrayList args, int min, int max) {
+        if(args != null) {
+            // validate number of arguments
+            validateArgsSize(args.size(), min, max);
+        }
+        
+        return Environment.getGlobalEnvironment();
     }
 
     //args should be array-list containing two elements, first is the object
