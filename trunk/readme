@@ -17,7 +17,7 @@ This package contains the classes responsible reading the scheme expressions and
 The classes here represent various scheme datatypes.
 
 3. jasi.symantics
-This is the engine of the interpreter. Scheme.java has the "eval" to evaluate s-exps and this is where the language behavior is realized. Environment.java contains the code for maintaining environment and also initial  global  enironment that becomes to the user in the interactive mode. If one wants add another primitive procedure(that can't be implemented in scheme using existing primitives), then he needs to add binding for same in the global environment in Environment.initGlobalEnv() method.
+This is the engine of the interpreter. Scheme.java has the "eval" to evaluate s-exps and this is where the language behavior is realized. Environment.java contains the code for maintaining environment and also initial  global enironment that becomes available to the user in the interactive mode. If one wants add another primitive procedure(that can't be implemented in scheme using existing primitives), then he needs to add binding for same in the global environment in Environment.initGlobalEnv() method.
 
 4. jasi.symantics.procedure
 CompoundProcedure.java contains the behavior of user defined procedures. PrimitiveProcedure.java contains implementation of (almost)all the primitive procedures.
